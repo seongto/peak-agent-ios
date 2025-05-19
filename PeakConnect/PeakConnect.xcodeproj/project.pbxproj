@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BAC253812DDB2161001E4A74 /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = BAC253802DDB2161001E4A74 /* NMapsMap */; };
 		E9B34D9B2DD190E600CF2EC9 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E9B34D9A2DD190E600CF2EC9 /* SnapKit */; };
 		E9B34D9E2DD1910C00CF2EC9 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E9B34D9D2DD1910C00CF2EC9 /* Then */; };
 		E9B34DA12DD1911A00CF2EC9 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E9B34DA02DD1911A00CF2EC9 /* Kingfisher */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BAC253822DDB22D2001E4A74 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 		E9B34D4A2DD17B2700CF2EC9 /* PeakConnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PeakConnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -51,6 +53,7 @@
 				E9B34DAF2DD1917900CF2EC9 /* RxBlocking in Frameworks */,
 				E9B34DA12DD1911A00CF2EC9 /* Kingfisher in Frameworks */,
 				E9B34DB12DD1917900CF2EC9 /* RxCocoa in Frameworks */,
+				BAC253812DDB2161001E4A74 /* NMapsMap in Frameworks */,
 				E9B34D9B2DD190E600CF2EC9 /* SnapKit in Frameworks */,
 				E9B34D9E2DD1910C00CF2EC9 /* Then in Frameworks */,
 				E9B34DB32DD1917900CF2EC9 /* RxRelay in Frameworks */,
@@ -105,6 +108,7 @@
 				E9B34DAE2DD1917900CF2EC9 /* RxBlocking */,
 				E9B34DB02DD1917900CF2EC9 /* RxCocoa */,
 				E9B34DB22DD1917900CF2EC9 /* RxRelay */,
+				BAC253802DDB2161001E4A74 /* NMapsMap */,
 			);
 			productName = PeakConnect;
 			productReference = E9B34D4A2DD17B2700CF2EC9 /* PeakConnect.app */;
@@ -141,6 +145,7 @@
 				E9B34DA22DD1912A00CF2EC9 /* XCRemoteSwiftPackageReference "Swinject" */,
 				E9B34DA52DD1913A00CF2EC9 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				E9B34DAD2DD1917900CF2EC9 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				BAC2537F2DDB2161001E4A74 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E9B34D4B2DD17B2700CF2EC9 /* Products */;
@@ -175,6 +180,7 @@
 /* Begin XCBuildConfiguration section */
 		E9B34D612DD17B2900CF2EC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BAC253822DDB22D2001E4A74 /* Secret.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -210,6 +216,7 @@
 		};
 		E9B34D622DD17B2900CF2EC9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BAC253822DDB22D2001E4A74 /* Secret.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -386,6 +393,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		BAC2537F2DDB2161001E4A74 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.21.0;
+			};
+		};
 		E9B34D992DD190E600CF2EC9 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
@@ -437,6 +452,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BAC253802DDB2161001E4A74 /* NMapsMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BAC2537F2DDB2161001E4A74 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
+			productName = NMapsMap;
+		};
 		E9B34D9A2DD190E600CF2EC9 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E9B34D992DD190E600CF2EC9 /* XCRemoteSwiftPackageReference "SnapKit" */;

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>NMFNcpKeyId</key>
-	<string>$(API_KEY)</string>
+	<string>$(NAVER_MAP_CLIENT_ID)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

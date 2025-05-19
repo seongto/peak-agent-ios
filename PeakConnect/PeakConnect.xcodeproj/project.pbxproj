@@ -64,11 +64,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BAE968842DDB2CA200413DD5 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				BAC253822DDB22D2001E4A74 /* Secret.xcconfig */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		E9B34D412DD17B2700CF2EC9 = {
 			isa = PBXGroup;
 			children = (
 				E9B34D4C2DD17B2700CF2EC9 /* PeakConnect */,
 				E9B34D4B2DD17B2700CF2EC9 /* Products */,
+				BAE968842DDB2CA200413DD5 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -180,7 +189,8 @@
 /* Begin XCBuildConfiguration section */
 		E9B34D612DD17B2900CF2EC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BAC253822DDB22D2001E4A74 /* Secret.xcconfig */;
+			baseConfigurationReferenceAnchor = E9B34D4C2DD17B2700CF2EC9 /* PeakConnect */;
+			baseConfigurationReferenceRelativePath = App/Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -216,7 +226,8 @@
 		};
 		E9B34D622DD17B2900CF2EC9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BAC253822DDB22D2001E4A74 /* Secret.xcconfig */;
+			baseConfigurationReferenceAnchor = E9B34D4C2DD17B2700CF2EC9 /* PeakConnect */;
+			baseConfigurationReferenceRelativePath = App/Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

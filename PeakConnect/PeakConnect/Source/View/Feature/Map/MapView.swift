@@ -8,25 +8,50 @@
 import UIKit
 import NMapsMap
 import SnapKit
+import Then
 
 class MapView: UIView {
 
     // MARK: - UI Components
     
     // 검색 창 컨테이너 뷰
-    let searchContainerView = UIView()
+    let searchContainerView = UIView().then {
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 10
+        $0.layer.shadowColor = UIColor.black.cgColor
+        $0.layer.shadowOpacity = 0.05
+        $0.layer.shadowOffset = CGSize(width: 0, height: 1)
+        $0.layer.shadowRadius = 4
+    }
     
     // 돋보기 아이콘 이미지 뷰
-    let searchIcon = UIImageView()
+    let searchIcon = UIImageView().then {
+        $0.image = UIImage(systemName: "magnifyingglass")
+        $0.tintColor = .gray
+        $0.contentMode = .scaleAspectFit
+    }
     
     // 검색어 입력 텍스트 필드
-    let searchTextField = UITextField()
+    let searchTextField = UITextField().then {
+        $0.placeholder = "검색"
+        $0.borderStyle = .none
+        $0.font = UIFont.systemFont(ofSize: 16)
+    }
     
     // 네이버 지도 뷰
     let mapContainerView = NMFNaverMapView()
     
     // 현재 위치 이동 버튼
-    let currentLocationButton = UIButton(type: .system)
+    let currentLocationButton = UIButton(type: .system).then {
+        $0.setImage(UIImage(systemName: "location.fill"), for: .normal)
+        $0.tintColor = .black
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 24
+        $0.layer.shadowColor = UIColor.black.cgColor
+        $0.layer.shadowOpacity = 0.2
+        $0.layer.shadowOffset = CGSize(width: 0, height: 2)
+        $0.layer.shadowRadius = 4
+    }
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -48,33 +73,8 @@ class MapView: UIView {
         addSubview(currentLocationButton)
         addSubview(mapContainerView)
         
-        // 검색바 배경 및 스타일 설정
-        searchContainerView.backgroundColor = .white
-        searchContainerView.layer.cornerRadius = 10
-        searchContainerView.layer.shadowColor = UIColor.black.cgColor
-        searchContainerView.layer.shadowOpacity = 0.05
-        searchContainerView.layer.shadowOffset = CGSize(width: 0, height: 1)
-        searchContainerView.layer.shadowRadius = 4
-
-        searchIcon.image = UIImage(systemName: "magnifyingglass")
-        searchIcon.tintColor = .gray
-        searchIcon.contentMode = .scaleAspectFit
         searchContainerView.addSubview(searchIcon)
-
-        searchTextField.placeholder = "검색"
-        searchTextField.borderStyle = .none
-        searchTextField.font = UIFont.systemFont(ofSize: 16)
         searchContainerView.addSubview(searchTextField)
-        
-        // 현재 위치 버튼 스타일 설정
-        currentLocationButton.setImage(UIImage(systemName: "location.fill"), for: .normal)
-        currentLocationButton.tintColor = .black
-        currentLocationButton.backgroundColor = .white
-        currentLocationButton.layer.cornerRadius = 24
-        currentLocationButton.layer.shadowColor = UIColor.black.cgColor
-        currentLocationButton.layer.shadowOpacity = 0.2
-        currentLocationButton.layer.shadowOffset = CGSize(width: 0, height: 2)
-        currentLocationButton.layer.shadowRadius = 4
     }
     
     // 각 컴포넌트의 오토레이아웃 제약 조건 설정

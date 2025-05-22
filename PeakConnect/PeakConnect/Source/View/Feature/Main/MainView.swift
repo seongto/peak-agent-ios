@@ -7,28 +7,64 @@
 
 import UIKit
 import SnapKit
+import Then
 
 class MainView: UIView {
 
     // MARK: - UI Components
     
     // 맵 타이틀 라벨
-    let titleLabel = UILabel()
+    let titleLabel = UILabel().then {
+        $0.text = "Peak Connect"
+        $0.font = UIFont.boldSystemFont(ofSize: 24)
+    }
     
     // 회사명 표시 라벨
-    let companyNameLabel = UILabel()
+    let companyNameLabel = UILabel().then {
+        $0.text = "<회사명>"
+        $0.font = UIFont.systemFont(ofSize: 20)
+    }
     
     // 산업군 태그들을 보여주는 스택
-    let industryTagsStack = UIStackView()
+    let industryTagsStack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.distribution = .fillEqually
+        for tag in ["산업군 태그", "산업군 태그", "산업군 태그", "산업군 태그"] {
+            let tagLabel = UILabel()
+            tagLabel.text = tag
+            tagLabel.font = UIFont.systemFont(ofSize: 14)
+            tagLabel.backgroundColor = .systemGray5
+            tagLabel.layer.cornerRadius = 8
+            tagLabel.clipsToBounds = true
+            tagLabel.textAlignment = .center
+            $0.addArrangedSubview(tagLabel)
+        }
+    }
     
     // 회사 정보 수정 버튼
-    let editCompanyButton = UIButton(type: .system)
+    let editCompanyButton = UIButton(type: .system).then {
+        $0.setTitle("회사 정보 수정", for: .normal)
+        $0.setTitleColor(.systemBlue, for: .normal)
+    }
     
     // 현재 위치에서 리드 찾기 버튼
-    let locationSearchButton = UIButton(type: .system)
+    let locationSearchButton = UIButton(type: .system).then {
+        $0.setTitle("현위치에서 리드찾기", for: .normal)
+        $0.backgroundColor = .systemBlue
+        $0.setTitleColor(.black, for: .normal)
+        $0.layer.cornerRadius = 15
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20)
+    }
     
     // 지도에서 리드 찾기 버튼
-    let mapSearchButton = UIButton(type: .system)
+    let mapSearchButton = UIButton(type: .system).then {
+        $0.setTitle("지도에서 리드찾기", for: .normal)
+        $0.backgroundColor = .systemOrange
+        $0.setTitleColor(.black, for: .normal)
+        $0.layer.cornerRadius = 15
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20)
+    }
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -44,49 +80,6 @@ class MainView: UIView {
     // MARK: - Setup
     private func setupViews() {
         backgroundColor = .white
-        
-        // 타이틀 라벨 스타일 설정
-        titleLabel.text = "Peak Connect"
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
-        
-        // 회사명 라벨 스타일 설정
-        companyNameLabel.text = "<회사명>"
-        companyNameLabel.font = UIFont.systemFont(ofSize: 20)
-        
-        // 산업군 태그 스타일 및 속성 설정
-        industryTagsStack.axis = .horizontal
-        industryTagsStack.spacing = 8
-        industryTagsStack.distribution = .fillEqually
-
-        for tag in ["산업군 태그", "산업군 태그", "산업군 태그", "산업군 태그"] {
-            let tagLabel = UILabel()
-            tagLabel.text = tag
-            tagLabel.font = UIFont.systemFont(ofSize: 14)
-            tagLabel.backgroundColor = .systemGray5
-            tagLabel.layer.cornerRadius = 8
-            tagLabel.clipsToBounds = true
-            tagLabel.textAlignment = .center
-            industryTagsStack.addArrangedSubview(tagLabel)
-        }
-        
-        // 회사 정보 수정 버튼 스타일 설정
-        editCompanyButton.setTitle("회사 정보 수정", for: .normal)
-        editCompanyButton.setTitleColor(.systemBlue, for: .normal)
-        
-        // 현위치에서 리드찾기 버튼 스타일 설정
-        locationSearchButton.setTitle("현위치에서 리드찾기", for: .normal)
-        locationSearchButton.backgroundColor = .systemBlue
-        locationSearchButton.setTitleColor(.black, for: .normal)
-        locationSearchButton.layer.cornerRadius = 15
-        locationSearchButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
-        
-        // 지도에서 리드찾기 버튼 스타일 설정
-        mapSearchButton.setTitle("지도에서 리드찾기", for: .normal)
-        mapSearchButton.backgroundColor = .systemOrange
-        mapSearchButton.setTitleColor(.black, for: .normal)
-        mapSearchButton.layer.cornerRadius = 15
-        mapSearchButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
-
         [titleLabel, companyNameLabel, industryTagsStack, editCompanyButton, locationSearchButton, mapSearchButton].forEach {
             addSubview($0)
         }

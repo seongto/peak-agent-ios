@@ -12,10 +12,20 @@ import SnapKit
 class MapView: UIView {
 
     // MARK: - UI Components
+    
+    // 검색 창 컨테이너 뷰
     let searchContainerView = UIView()
+    
+    // 돋보기 아이콘 이미지 뷰
     let searchIcon = UIImageView()
+    
+    // 검색어 입력 텍스트 필드
     let searchTextField = UITextField()
+    
+    // 네이버 지도 뷰
     let mapContainerView = NMFNaverMapView()
+    
+    // 현재 위치 이동 버튼
     let currentLocationButton = UIButton(type: .system)
 
     // MARK: - Init
@@ -33,10 +43,12 @@ class MapView: UIView {
     private func setupViews() {
         backgroundColor = .white
         
+        // 각 컴포넌트를 뷰에 추가
         addSubview(searchContainerView)
         addSubview(currentLocationButton)
         addSubview(mapContainerView)
         
+        // 검색바 배경 및 스타일 설정
         searchContainerView.backgroundColor = .white
         searchContainerView.layer.cornerRadius = 10
         searchContainerView.layer.shadowColor = UIColor.black.cgColor
@@ -53,7 +65,8 @@ class MapView: UIView {
         searchTextField.borderStyle = .none
         searchTextField.font = UIFont.systemFont(ofSize: 16)
         searchContainerView.addSubview(searchTextField)
-
+        
+        // 현재 위치 버튼 스타일 설정
         currentLocationButton.setImage(UIImage(systemName: "location.fill"), for: .normal)
         currentLocationButton.tintColor = .black
         currentLocationButton.backgroundColor = .white
@@ -63,7 +76,8 @@ class MapView: UIView {
         currentLocationButton.layer.shadowOffset = CGSize(width: 0, height: 2)
         currentLocationButton.layer.shadowRadius = 4
     }
-
+    
+    // 각 컴포넌트의 오토레이아웃 제약 조건 설정
     private func setupLayout() {
         mapContainerView.snp.makeConstraints { make in
             make.edges.equalToSuperview()

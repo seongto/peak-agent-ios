@@ -28,4 +28,8 @@ class IndustryPickerCollectionView: UICollectionView {
         register(IndustryPickerCollectionViewCell.self, forCellWithReuseIdentifier: IndustryPickerCollectionViewCell.id)
         register(IndustryPickerHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: IndustryPickerHeaderView.id)
     }
+    
+    override var intrinsicContentSize: CGSize {
+        return collectionViewLayout.collectionViewContentSize
+    }
 }

@@ -6,7 +6,7 @@ class IndustryPickerCollectionViewCell: UICollectionViewCell {
     
     static let id = "IndustryPickerCollectionViewCell"
     
-    private let tagButton = UIButton(type: .system).then {
+    private let tagButton = UIButton().then {
         $0.backgroundColor = .yellow
         $0.tintColor = .black
         $0.setTitleColor(.black, for: .normal)

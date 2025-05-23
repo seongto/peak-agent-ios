@@ -9,11 +9,11 @@ import UIKit
 import SnapKit
 import Then
 
-class IndustryPickerHeaderView: UICollectionReusableView {
+final class IndustryPickerHeaderView: UICollectionReusableView {
     
     static let id = "IndustryPickerHeaderView"
     
-    let titleLabel = UILabel().then {
+    private let titleLabel = UILabel().then {
         $0.font = .preferredFont(forTextStyle: .headline)
     }
 
@@ -25,6 +25,11 @@ class IndustryPickerHeaderView: UICollectionReusableView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+// MARK: - 레이아웃 설정
+
+extension IndustryPickerHeaderView {
     
     private func setupUI() {
         addSubview(titleLabel)
@@ -34,6 +39,11 @@ class IndustryPickerHeaderView: UICollectionReusableView {
             make.top.bottom.equalToSuperview()
         }
     }
+}
+
+// MARK: - 데이터 설정
+
+extension IndustryPickerHeaderView {
     
     func setTitle(_ title: String) {
         titleLabel.text = title

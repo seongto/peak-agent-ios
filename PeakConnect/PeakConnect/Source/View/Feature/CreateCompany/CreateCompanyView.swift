@@ -9,7 +9,7 @@ import UIKit
 import Then
 import SnapKit
 
-class CreateCompanyView: UIView {
+final class CreateCompanyView: UIView {
     
     // MARK: - UI Components
     
@@ -89,12 +89,14 @@ class CreateCompanyView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - 레이아웃 설정
+}
+
+// MARK: - 레이아웃 설정
+
+extension CreateCompanyView {
     
     private func setupUI() {
         backgroundColor = .white
-        
         
         [ scrollView ].forEach { addSubview($0) }
         
@@ -125,7 +127,7 @@ class CreateCompanyView: UIView {
         }
 
         logoLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(100)
+            make.top.equalToSuperview().inset(20)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(30)
         }

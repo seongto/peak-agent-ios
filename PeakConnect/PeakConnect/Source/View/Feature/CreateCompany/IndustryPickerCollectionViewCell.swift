@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-class IndustryPickerCollectionViewCell: UICollectionViewCell {
+final class IndustryPickerCollectionViewCell: UICollectionViewCell {
     
     static let id = "IndustryPickerCollectionViewCell"
     
@@ -24,6 +24,11 @@ class IndustryPickerCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+}
+
+// MARK: - 레이아웃 설정
+
+extension IndustryPickerCollectionViewCell {
     
     private func setupUI() {
         contentView.addSubview(tagButton)
@@ -32,6 +37,11 @@ class IndustryPickerCollectionViewCell: UICollectionViewCell {
             make.edges.equalToSuperview()
         }
     }
+}
+
+// MARK: - 데이터 설정
+
+extension IndustryPickerCollectionViewCell {
     
     func setTitle(_ title: String) {
         tagButton.setTitle(title, for: .normal)

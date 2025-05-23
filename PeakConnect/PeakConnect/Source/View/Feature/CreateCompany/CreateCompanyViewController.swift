@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CreateCompanyViewController: UIViewController {
+final class CreateCompanyViewController: UIViewController {
     
     enum Section: Hashable {
         case category(IndustryCategory)

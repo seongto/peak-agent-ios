@@ -30,16 +30,6 @@ class MainView: UIView {
         $0.axis = .horizontal
         $0.spacing = 8
         $0.distribution = .fillEqually
-        for tag in ["산업군 태그", "산업군 태그", "산업군 태그", "산업군 태그"] {
-            let tagLabel = UILabel()
-            tagLabel.text = tag
-            tagLabel.font = UIFont.systemFont(ofSize: 14)
-            tagLabel.backgroundColor = .systemGray5
-            tagLabel.layer.cornerRadius = 8
-            tagLabel.clipsToBounds = true
-            tagLabel.textAlignment = .center
-            $0.addArrangedSubview(tagLabel)
-        }
     }
     
     // 회사 정보 수정 버튼
@@ -80,8 +70,20 @@ class MainView: UIView {
     // MARK: - Setup
     private func setupViews() {
         backgroundColor = .white
+        
         [titleLabel, companyNameLabel, industryTagsStack, editCompanyButton, locationSearchButton, mapSearchButton].forEach {
             addSubview($0)
+        }
+        
+        for tag in ["산업군 태그", "산업군 태그", "산업군 태그", "산업군 태그"] {
+            let tagLabel = UILabel()
+            tagLabel.text = tag
+            tagLabel.font = UIFont.systemFont(ofSize: 14)
+            tagLabel.backgroundColor = .systemGray5
+            tagLabel.layer.cornerRadius = 8
+            tagLabel.clipsToBounds = true
+            tagLabel.textAlignment = .center
+            industryTagsStack.addArrangedSubview(tagLabel)
         }
     }
     

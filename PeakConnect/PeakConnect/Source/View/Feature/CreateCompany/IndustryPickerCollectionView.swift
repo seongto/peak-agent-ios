@@ -27,6 +27,9 @@ class IndustryPickerCollectionView: UICollectionView {
     private func setupCollectionView() {
         register(IndustryPickerCollectionViewCell.self, forCellWithReuseIdentifier: IndustryPickerCollectionViewCell.id)
         register(IndustryPickerHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: IndustryPickerHeaderView.id)
+        
+        isScrollEnabled = false
+
     }
     
     override var intrinsicContentSize: CGSize {

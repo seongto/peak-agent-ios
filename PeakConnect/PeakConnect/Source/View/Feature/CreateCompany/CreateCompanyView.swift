@@ -1,8 +1,8 @@
 //
-//  CreateCompanyView.swift
-//  PeakConnect
+// CreateCompanyView.swift
+// PeakConnect
 //
-//  Created by 서문가은 on 5/22/25.
+// Created by 서문가은 on 5/22/25.
 //
 
 import UIKit
@@ -12,6 +12,8 @@ import SnapKit
 class CreateCompanyView: UIView {
     
     // MARK: - UI Components
+    
+    private let headerContainerView = UIView()
     
     // 로고 라벨
     private let logoLabel = UILabel().then {
@@ -34,13 +36,13 @@ class CreateCompanyView: UIView {
     // 스크롤뷰
     private let scrollView = UIScrollView().then {
         $0.isScrollEnabled = true
-        $0.backgroundColor = .red
+        $0.backgroundColor = .white
     }
+    
     private let contentView = UIView().then {
-        $0.backgroundColor = .blue
+        $0.backgroundColor = .white
     }
-
-        
+    
     // 회사 정보 스택뷰
     private let informationStackView = UIStackView().then {
         $0.axis = .vertical
@@ -103,14 +105,14 @@ class CreateCompanyView: UIView {
         $0.distribution = .fill
         $0.alignment = .leading
     }
-        
+    
     private let industryLabel = UILabel().then {
         $0.text = "산업군"
         $0.textAlignment = .left
     }
     
     let industryCollectionView = IndustryPickerCollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-
+    
     // 등록하기 버튼
     private let createButton = UIButton(type: .system).then {
         $0.backgroundColor = .blue
@@ -118,7 +120,7 @@ class CreateCompanyView: UIView {
         $0.layer.cornerRadius = 10
         $0.setTitle("등록하기", for: .normal)
     }
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -128,24 +130,29 @@ class CreateCompanyView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - 레이아웃 설정
     
+}
+
+// MARK: - 레이아웃 설정
+
+extension CreateCompanyView {
     private func setupUI() {
-        industryCollectionView.isScrollEnabled = false
         backgroundColor = .white
         
         [
-            logoLabel,
-            descriptionLabel,
+            headerContainerView,
             scrollView,
             createButton
         ].forEach {
             addSubview($0)
         }
         
+        [logoLabel, descriptionLabel].forEach {
+            headerContainerView.addSubview($0)
+        }
+        
         scrollView.addSubview(contentView)
         contentView.addSubview(informationStackView)
-        
         [
             companyNameStackView,
             companyDescriptionStackView,
@@ -181,20 +188,26 @@ class CreateCompanyView: UIView {
         ].forEach {
             industryStackView.addArrangedSubview($0)
         }
-
-        logoLabel.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).inset(20)
-            make.left.right.equalToSuperview().inset(20)
+        
+        headerContainerView.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        logoLabel.snp.remakeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.horizontalEdges.equalToSuperview().inset(20)
             make.height.equalTo(30)
         }
         
-        descriptionLabel.snp.makeConstraints { make in
+        descriptionLabel.snp.remakeConstraints { make in
             make.top.equalTo(logoLabel.snp.bottom).offset(16)
-            make.leading.equalTo(logoLabel)
+            make.horizontalEdges.equalTo(logoLabel)
+            make.bottom.equalToSuperview().offset(-10)
         }
         
-        scrollView.snp.makeConstraints { make in
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(20)
+        scrollView.snp.remakeConstraints { make in
+            make.top.equalTo(headerContainerView.snp.bottom)
             make.horizontalEdges.equalToSuperview().inset(10)
             make.bottom.equalTo(createButton.snp.top).offset(-20)
         }
@@ -205,8 +218,9 @@ class CreateCompanyView: UIView {
         }
         
         informationStackView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().inset(20) 
+            make.top.equalToSuperview().offset(20)
+            make.horizontalEdges.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview()
         }
         
         createButton.snp.makeConstraints { make in
@@ -216,18 +230,15 @@ class CreateCompanyView: UIView {
         }
         
         companyNameStackView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(10)
-            make.height.equalTo(100)
+            make.horizontalEdges.equalToSuperview()
         }
         
         companyDescriptionStackView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(10)
-            make.height.equalTo(120)
+            make.horizontalEdges.equalToSuperview()
         }
         
         industryStackView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(10)
-            make.height.equalTo(200)
+            make.horizontalEdges.equalToSuperview()
         }
         
         companyNameLabel.snp.makeConstraints { make in
@@ -260,21 +271,15 @@ class CreateCompanyView: UIView {
             make.height.equalTo(20)
         }
         
-        industryStackView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(10)
-            make.height.equalTo(100)
-        }
-        
         industryLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.height.equalTo(20)
         }
         
         industryCollectionView.snp.makeConstraints { make in
-            //make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(400)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(900)
             make.bottom.equalToSuperview()
-
         }
     }
 }

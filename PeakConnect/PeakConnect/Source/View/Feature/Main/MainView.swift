@@ -38,15 +38,6 @@ class MainView: UIView {
         $0.setTitleColor(.systemBlue, for: .normal)
     }
     
-    // 현재 위치에서 리드 찾기 버튼
-    let locationSearchButton = UIButton(type: .system).then {
-        $0.setTitle("현위치에서 리드찾기", for: .normal)
-        $0.backgroundColor = .systemBlue
-        $0.setTitleColor(.black, for: .normal)
-        $0.layer.cornerRadius = 15
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20)
-    }
-    
     // 지도에서 리드 찾기 버튼
     let mapSearchButton = UIButton(type: .system).then {
         $0.setTitle("지도에서 리드찾기", for: .normal)
@@ -71,7 +62,7 @@ class MainView: UIView {
     private func setupViews() {
         backgroundColor = .white
         
-        [titleLabel, companyNameLabel, industryTagsStack, editCompanyButton, locationSearchButton, mapSearchButton].forEach {
+        [titleLabel, companyNameLabel, industryTagsStack, editCompanyButton, mapSearchButton].forEach {
             addSubview($0)
         }
         
@@ -110,17 +101,9 @@ class MainView: UIView {
             make.leading.equalTo(titleLabel)
         }
 
-        locationSearchButton.snp.makeConstraints { make in
-            make.top.equalTo(editCompanyButton.snp.bottom).offset(60)
-            make.leading.equalToSuperview().offset(20)
-            make.trailing.equalTo(self.snp.centerX).offset(-10)
-            make.height.equalTo(140)
-        }
-
         mapSearchButton.snp.makeConstraints { make in
-            make.top.equalTo(locationSearchButton)
-            make.leading.equalTo(self.snp.centerX).offset(10)
-            make.trailing.equalToSuperview().offset(-20)
+            make.top.equalTo(editCompanyButton.snp.bottom).offset(40)
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(140)
         }
     }

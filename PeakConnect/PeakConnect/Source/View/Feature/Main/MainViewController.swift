@@ -42,14 +42,16 @@ extension MainViewController {
     
     private func bind() {
         let viewWillAppear = rx.methodInvoked(#selector(viewWillAppear)).map { _ in }
-        let input = MainViewModel.Input(viewWillAppear: viewWillAppear)
+        let editCompanyButtonTapped = mainView.editCompanyButton.rx.tap.asObservable()
+        let input = MainViewModel.Input(viewWillAppear: viewWillAppear, editCompanyButtonTapped: editCompanyButtonTapped)
+        
         let output = mainViewModel.transform(input: input)
         
         output.isBeginner
             .skip(1)
             .drive(with: self, onNext: { owner, _ in
                 print("dd")
-                owner.connectCreateCompanyView()
+                owner.connectCreateCompanyView(mode: .create)
             })
             .disposed(by: disposeBag)
         
@@ -58,17 +60,30 @@ extension MainViewController {
                 owner.mainView.setupData(company: company)
             })
             .disposed(by: disposeBag)
+        
+        output.edit
+            .drive(with: self, onNext: { owner, company in
+                owner.connectCreateCompanyView(mode: .edit(company: company))
+            })
+            .disposed(by: disposeBag)
     }
     
 }
 
 extension MainViewController {
     
-    private func connectCreateCompanyView() {
-        let createCompanyViewModel = CreateCompanyViewModel(mode: .create)
+    private func connectCreateCompanyView(mode: CreateCompanyMode) {
+        let createCompanyViewModel = CreateCompanyViewModel(mode: mode)
         let createCompanyViewController = CreateCompanyViewController(viewModel: createCompanyViewModel)
+        
+        switch mode {
+        case .create:
+            navigationController?.pushViewController(createCompanyViewController, animated: false)
 
-        navigationController?.pushViewController(createCompanyViewController, animated: false)
+        case .edit(_):
+            navigationController?.pushViewController(createCompanyViewController, animated: true)
+
+        }
 
     }
 }

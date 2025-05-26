@@ -48,18 +48,17 @@ final class CreateCompanyViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setupDataSource()
+        setupCollectionView()
         bind()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        createCompanyView.industryCollectionView.allowsSelection = true
-        createCompanyView.industryCollectionView.isUserInteractionEnabled = true
     }
     
-    private func setupDataSource() {
+    private func setupCollectionView() {
+        createCompanyView.industryCollectionView.delegate = self
+
         dataSource = RxCollectionViewSectionedReloadDataSource<SectionOfIndustries>(
             configureCell: { dataSource, collectionView, indexPath, industry in
                 guard let cell = collectionView.dequeueReusableCell(

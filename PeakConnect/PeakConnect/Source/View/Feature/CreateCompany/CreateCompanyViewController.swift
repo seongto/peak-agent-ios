@@ -176,6 +176,19 @@ extension CreateCompanyViewController {
                 guard let company = company else { return }
                 owner.createCompanyView.companyNameTextField.text = company.name
                 owner.createCompanyView.companyDescriptionTextView.text = company.description
+                
+                // 표시할 선택된 industry 버튼 설정
+                let allSections = IndustryPickerData.categories.map { $0.industries }.flatMap { $0 }
+                owner.selectedIndexPaths = []
+
+                for (sectionIndex, section) in IndustryPickerData.categories.enumerated() {
+                    for (itemIndex, industry) in section.industries.enumerated() {
+                        if company.industry.contains(industry) {
+                            owner.selectedIndexPaths.insert(IndexPath(item: itemIndex, section: sectionIndex))
+                        }
+                    }
+                }
+                owner.createCompanyView.industryCollectionView.reloadData()
             })
             .disposed(by: disposeBag)
     }
@@ -213,4 +226,4 @@ extension CreateCompanyViewController: UICollectionViewDelegateFlowLayout {
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 10
     }
-} 
+}

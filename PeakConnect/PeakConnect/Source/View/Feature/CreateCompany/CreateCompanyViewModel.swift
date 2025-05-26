@@ -37,7 +37,7 @@ final class CreateCompanyViewModel {
             companyRelay.accept(company)
         case .create:
             break
-        }
+        } 
     }
 }
 

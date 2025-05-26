@@ -210,7 +210,7 @@ extension CreateCompanyView {
         industryCollectionView.snp.makeConstraints { make in
             make.top.equalTo(industryLabel.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(800)
+            make.height.equalTo(600)
         }
         
         createButton.snp.makeConstraints { make in
@@ -218,6 +218,22 @@ extension CreateCompanyView {
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(50)
             make.bottom.equalToSuperview().inset(20)
+        }
+    }
+}
+
+extension CreateCompanyView {
+    
+    func setupEditMode(_ company: Company) {
+        logoImageView.isHidden = true
+        descriptionLabel.isHidden = true
+        createButton.setTitle("수정하기", for: .normal)
+        
+        companyNameTextField.text = company.name
+        companyDescriptionTextView.text = company.description
+        
+        companyNameLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(20)
         }
     }
 }

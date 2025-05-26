@@ -19,7 +19,8 @@ final class CreateCompanyViewModel {
     
     private var countRelay = BehaviorRelay<String>(value: "0/100")
     private var industryRelay = BehaviorRelay<[Industry]>(value: [])
-    private var completeRelay = PublishRelay<Void>()
+    private var completeRelay = PublishRelay<CreateCompanyMode>()
+    private var companyRelay = BehaviorRelay<Company?>(value: nil)
     
     private var companyName: String = ""
     private var companyDescription: String = ""
@@ -28,15 +29,15 @@ final class CreateCompanyViewModel {
     private let disposeBag = DisposeBag()
     
     init(mode: CreateCompanyMode) {
-        
         switch mode {
         case .edit(let company):
             companyName = company.name
             companyDescription = company.description
             industy = company.industry
+            companyRelay.accept(company)
         case .create:
             break
-        }
+        } 
     }
 }
 
@@ -52,7 +53,8 @@ extension CreateCompanyViewModel {
     struct Output {
         let companyDescriptionCount: Driver<String>
         let industry: Driver<[Industry]>
-        let complete: Driver<Void>
+        let complete: Driver<CreateCompanyMode>
+        let company: Driver<Company?>
     }
     
     func transform(input: Input) -> Output {
@@ -86,14 +88,21 @@ extension CreateCompanyViewModel {
         input.registerButtonTapped
             .withUnretained(self)
             .subscribe(onNext: { owner, _ in
-                owner.registerCompany()
+            
+                if let company = owner.companyRelay.value {
+                    owner.registerCompany(mode: .edit(company: company))
+
+                } else {
+                    owner.registerCompany(mode: .create)
+                }
             })
             .disposed(by: disposeBag)
         
         return Output(
             companyDescriptionCount: countRelay.asDriver(onErrorDriveWith: .empty()),
             industry: industryRelay.asDriver(onErrorDriveWith: .empty()),
-            complete: completeRelay.asDriver(onErrorDriveWith: .empty())
+            complete: completeRelay.asDriver(onErrorDriveWith: .empty()),
+            company: companyRelay.asDriver(onErrorDriveWith: .empty())
         )
     }
 }
@@ -102,23 +111,21 @@ extension CreateCompanyViewModel {
 
 extension CreateCompanyViewModel {
     
-    private func registerCompany() {
-        // 테스트용 UUID 직접 세팅
-        NetworkManager.shared.companyUUID = "12345678-1234-1234-1234-123456789012"
-        
+    private func registerCompany(mode: CreateCompanyMode) {        
         let industryText = industy.map { $0.name }.joined(separator: ",")
         NetworkManager.shared.registerCompany(
             name: companyName,
             industry: industryText,
-            description: companyDescription
+            description: companyDescription,
+            mode: mode
         ) { result in
             switch result {
             case .success(let uuid):
+                UserDefaults.standard.isBegginer = true
+                self.completeRelay.accept(mode)
                 print("회사 등록 성공, UUID:", uuid)
-                // TODO: 후속 처리 (예: 화면 닫기, 알림 표시 등)
             case .failure(let error):
                 print("회사 등록 실패:", error.localizedDescription)
-                // TODO: 에러 처리 (예: 알림 표시)
             }
         }
     }

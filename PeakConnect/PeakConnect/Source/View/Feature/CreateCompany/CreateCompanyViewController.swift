@@ -49,6 +49,8 @@ final class CreateCompanyViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = true
+        tabBarController?.tabBar.isHidden = true
         setupCollectionView()
         bind()
     }
@@ -61,13 +63,13 @@ final class CreateCompanyViewController: UIViewController {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, environment -> NSCollectionLayoutSection? in
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .estimated(100),
-                heightDimension: .absolute(40)
+                heightDimension: .absolute(26)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(40)
+                heightDimension: .estimated(26)
             )
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
             group.interItemSpacing = .fixed(10)
@@ -142,7 +144,15 @@ extension CreateCompanyViewController {
                 } else {
                     self.selectedIndexPaths.insert(indexPath)
                 }
-                self.createCompanyView.industryCollectionView.reloadItems(at: [indexPath])
+                
+                // ✅ reload 없이 셀 직접 업데이트, 애니메이션 적용
+                if let cell = self.createCompanyView.industryCollectionView.cellForItem(at: indexPath) as? IndustryPickerCollectionViewCell {
+                    let isSelected = self.selectedIndexPaths.contains(indexPath)
+                    UIView.animate(withDuration: 0.25) {
+                        cell.setColor(isSelected)
+                    }
+                }
+                
             })
             .disposed(by: disposeBag)
         
@@ -166,14 +176,50 @@ extension CreateCompanyViewController {
             .disposed(by: disposeBag)
         
         output.complete
-            .drive(with: self, onNext: { owner, _  in
-                owner.gobackMain()
+            .drive(with: self, onNext: { owner, mode  in
+                owner.gobackMain(mode: mode)
+            })
+            .disposed(by: disposeBag)
+        
+        output.company
+            .drive(with: self, onNext: { owner, company in
+                guard let company = company else { return }
+                owner.createCompanyView.setupEditMode(company)
+                owner.navigation()
+                
+                // 표시할 선택된 industry 버튼 설정
+                let allSections = IndustryPickerData.categories.map { $0.industries }.flatMap { $0 }
+                owner.selectedIndexPaths = []
+
+                for (sectionIndex, section) in IndustryPickerData.categories.enumerated() {
+                    for (itemIndex, industry) in section.industries.enumerated() {
+                        if company.industry.contains(industry) {
+                            owner.selectedIndexPaths.insert(IndexPath(item: itemIndex, section: sectionIndex))
+                        }
+                    }
+                }
+                owner.createCompanyView.industryCollectionView.reloadData()
             })
             .disposed(by: disposeBag)
     }
     
-    private func gobackMain() {
-        navigationController?.popViewController(animated: true)
+    private func gobackMain(mode: CreateCompanyMode) {
+        switch mode {
+        case .create:
+            navigationController?.popViewController(animated: true)
+        case .edit(_):
+            navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    private func navigation() {
+        navigationController?.navigationBar.isHidden = false
+        let titleLabel = UILabel()
+        titleLabel.text = "회사 정보 수정"
+        titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
+        titleLabel.textColor = .label
+        navigationItem.titleView = titleLabel
+
     }
 }
 
@@ -205,4 +251,4 @@ extension CreateCompanyViewController: UICollectionViewDelegateFlowLayout {
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 10
     }
-} 
+}

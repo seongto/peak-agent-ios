@@ -26,13 +26,13 @@ class MainView: UIView {
     }
     
     let greetingLabel = UILabel().then {
-        $0.text = "안녕하세요,"
+        $0.text = "안녕하세요"
         $0.font = UIFont.systemFont(ofSize: 16)
         $0.textColor = .white
     }
     
     let companyNameLabel = UILabel().then {
-        $0.text = "더선한 주식회사 님"
+        $0.text = "더선한 스튜디오 님"
         $0.font = UIFont.boldSystemFont(ofSize: 20)
         $0.textColor = .white
     }
@@ -41,7 +41,7 @@ class MainView: UIView {
         $0.setImage(UIImage(systemName: "pencil"), for: .normal)
         $0.tintColor = .white
         $0.backgroundColor = .primary
-        $0.layer.cornerRadius = 16
+        $0.layer.cornerRadius = 20
     }
     
     let industryTagsStackView: UIStackView = {
@@ -163,5 +163,13 @@ class MainView: UIView {
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(50)
         }
+    }
+}
+
+
+extension MainView {
+    
+    func setupData(company: Company) {
+        companyNameLabel.text = "\(company.name) 님"
     }
 }

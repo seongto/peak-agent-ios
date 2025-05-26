@@ -174,8 +174,8 @@ extension CreateCompanyViewController {
             .disposed(by: disposeBag)
         
         output.complete
-            .drive(with: self, onNext: { owner, _  in
-                owner.gobackMain()
+            .drive(with: self, onNext: { owner, mode  in
+                owner.gobackMain(mode: mode)
             })
             .disposed(by: disposeBag)
         
@@ -201,8 +201,13 @@ extension CreateCompanyViewController {
             .disposed(by: disposeBag)
     }
     
-    private func gobackMain() {
-        navigationController?.popViewController(animated: true)
+    private func gobackMain(mode: CreateCompanyMode) {
+        switch mode {
+        case .create:
+            dismiss(animated: true)
+        case .edit(_):
+            navigationController?.popViewController(animated: true)
+        }
     }
     
     private func navigation() {

@@ -19,7 +19,7 @@ final class CreateCompanyViewModel {
     
     private var countRelay = BehaviorRelay<String>(value: "0/100")
     private var industryRelay = BehaviorRelay<[Industry]>(value: [])
-    private var completeRelay = PublishRelay<Void>()
+    private var completeRelay = PublishRelay<CreateCompanyMode>()
     private var companyRelay = BehaviorRelay<Company?>(value: nil)
     
     private var companyName: String = ""
@@ -53,7 +53,7 @@ extension CreateCompanyViewModel {
     struct Output {
         let companyDescriptionCount: Driver<String>
         let industry: Driver<[Industry]>
-        let complete: Driver<Void>
+        let complete: Driver<CreateCompanyMode>
         let company: Driver<Company?>
     }
     
@@ -121,11 +121,11 @@ extension CreateCompanyViewModel {
         ) { result in
             switch result {
             case .success(let uuid):
+                UserDefaults.standard.isBegginer = true
+                self.completeRelay.accept(mode)
                 print("회사 등록 성공, UUID:", uuid)
-                // TODO: 후속 처리 (예: 화면 닫기, 알림 표시 등)
             case .failure(let error):
                 print("회사 등록 실패:", error.localizedDescription)
-                // TODO: 에러 처리 (예: 알림 표시)
             }
         }
     }

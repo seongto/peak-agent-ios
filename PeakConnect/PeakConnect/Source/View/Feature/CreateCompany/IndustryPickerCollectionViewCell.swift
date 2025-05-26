@@ -46,4 +46,8 @@ extension IndustryPickerCollectionViewCell {
     func setTitle(_ title: String) {
         tagButton.setTitle(title, for: .normal)
     }
+    
+    func setColor(_ isSelected: Bool) {
+        tagButton.backgroundColor = isSelected ? .lightGray : .white
+    }
 }

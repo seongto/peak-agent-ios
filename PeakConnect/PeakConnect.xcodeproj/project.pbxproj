@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BAC253812DDB2161001E4A74 /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = BAC253802DDB2161001E4A74 /* NMapsMap */; };
+		BAF1FCFF2DE403A20053EBBA /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = BAF1FCFE2DE403A20053EBBA /* RxDataSources */; };
 		E9B34D9B2DD190E600CF2EC9 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E9B34D9A2DD190E600CF2EC9 /* SnapKit */; };
 		E9B34D9E2DD1910C00CF2EC9 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E9B34D9D2DD1910C00CF2EC9 /* Then */; };
 		E9B34DA12DD1911A00CF2EC9 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E9B34DA02DD1911A00CF2EC9 /* Kingfisher */; };
@@ -52,6 +53,7 @@
 				E9B34DA72DD1913A00CF2EC9 /* Alamofire in Frameworks */,
 				E9B34DAF2DD1917900CF2EC9 /* RxBlocking in Frameworks */,
 				E9B34DA12DD1911A00CF2EC9 /* Kingfisher in Frameworks */,
+				BAF1FCFF2DE403A20053EBBA /* RxDataSources in Frameworks */,
 				E9B34DB12DD1917900CF2EC9 /* RxCocoa in Frameworks */,
 				BAC253812DDB2161001E4A74 /* NMapsMap in Frameworks */,
 				E9B34D9B2DD190E600CF2EC9 /* SnapKit in Frameworks */,
@@ -118,6 +120,7 @@
 				E9B34DB02DD1917900CF2EC9 /* RxCocoa */,
 				E9B34DB22DD1917900CF2EC9 /* RxRelay */,
 				BAC253802DDB2161001E4A74 /* NMapsMap */,
+				BAF1FCFE2DE403A20053EBBA /* RxDataSources */,
 			);
 			productName = PeakConnect;
 			productReference = E9B34D4A2DD17B2700CF2EC9 /* PeakConnect.app */;
@@ -155,6 +158,7 @@
 				E9B34DA52DD1913A00CF2EC9 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				E9B34DAD2DD1917900CF2EC9 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				BAC2537F2DDB2161001E4A74 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
+				BAF1FCFD2DE403A20053EBBA /* XCRemoteSwiftPackageReference "RxDataSources" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E9B34D4B2DD17B2700CF2EC9 /* Products */;
@@ -412,6 +416,14 @@
 				minimumVersion = 3.21.0;
 			};
 		};
+		BAF1FCFD2DE403A20053EBBA /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
 		E9B34D992DD190E600CF2EC9 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
@@ -467,6 +479,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BAC2537F2DDB2161001E4A74 /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
 			productName = NMapsMap;
+		};
+		BAF1FCFE2DE403A20053EBBA /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BAF1FCFD2DE403A20053EBBA /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
 		};
 		E9B34D9A2DD190E600CF2EC9 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;

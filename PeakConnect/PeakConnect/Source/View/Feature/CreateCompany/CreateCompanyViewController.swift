@@ -29,12 +29,9 @@ final class CreateCompanyViewController: UIViewController {
     private let createCompanyView = CreateCompanyView()
     private var createCompanyViewModel: CreateCompanyViewModel
     private let industrySelectedRelay = PublishRelay<Industry>()
-    
     private let disposeBag = DisposeBag()
     
     private var dataSource: RxCollectionViewSectionedReloadDataSource<SectionOfIndustries>!
-    
-    private var selectedIndexPath: IndexPath?
     
     init(viewModel: CreateCompanyViewModel) {
         self.createCompanyViewModel = viewModel
@@ -63,29 +60,17 @@ final class CreateCompanyViewController: UIViewController {
     }
     
     private func setupDataSource() {
-        let sections = IndustryPickerData.categories.map { category in
-            SectionOfIndustries(header: category.name, items: category.industries)
-        }
-        
-        Observable.just(sections)
-            .bind(to: createCompanyView.industryCollectionView.rx.items(dataSource: dataSource))
-            .disposed(by: disposeBag)
-        
         dataSource = RxCollectionViewSectionedReloadDataSource<SectionOfIndustries>(
-            configureCell: { [weak self] dataSource, collectionView, indexPath, industry in
-                guard let self = self else { return UICollectionViewCell() }
+            configureCell: { dataSource, collectionView, indexPath, industry in
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: IndustryPickerCollectionViewCell.id,
                     for: indexPath
                 ) as? IndustryPickerCollectionViewCell else { return UICollectionViewCell() }
-                let isSelected = indexPath == self.selectedIndexPath
-                cell.backgroundColor = .red
                 cell.setTitle(industry.name)
                 cell.contentView.isUserInteractionEnabled = false
                 return cell
             },
-            configureSupplementaryView: { [weak self] dataSource, collectionView, kind, indexPath in
-                guard let self = self else { return UICollectionReusableView() }
+            configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
                 guard let header = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: IndustryPickerHeaderView.id,
@@ -106,6 +91,13 @@ final class CreateCompanyViewController: UIViewController {
 extension CreateCompanyViewController {
     
     private func bind() {
+        let sections = IndustryPickerData.categories.map { category in
+            SectionOfIndustries(header: category.name, items: category.industries)
+        }
+        Observable.just(sections)
+            .bind(to: createCompanyView.industryCollectionView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
         let name = createCompanyView.companyNameTextField.rx.text.orEmpty.skip(1).asObservable()
         let description = createCompanyView.companyDescriptionTextField.rx.text.orEmpty.skip(1).asObservable()
         
@@ -116,7 +108,6 @@ extension CreateCompanyViewController {
         )
         
         let output = createCompanyViewModel.transform(input: input)
-        
     }
 }
 

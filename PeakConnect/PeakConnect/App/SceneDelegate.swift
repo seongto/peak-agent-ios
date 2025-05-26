@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
 
-        let mainVC = UINavigationController(rootViewController: CreateCompanyViewController(viewModel: CreateCompanyViewModel(mode: .create)))
+        let mainVC = UINavigationController(rootViewController: MainViewController())
         let dummyHistoryVC = UIViewController()
         let tabBarController = UITabBarController()
         tabBarController.setViewControllers([mainVC, dummyHistoryVC], animated: false)

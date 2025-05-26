@@ -49,6 +49,8 @@ final class CreateCompanyViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = true
+        tabBarController?.tabBar.isHidden = true
         setupCollectionView()
         bind()
     }

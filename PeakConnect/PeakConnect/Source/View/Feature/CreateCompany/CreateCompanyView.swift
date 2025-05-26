@@ -210,7 +210,7 @@ extension CreateCompanyView {
         industryCollectionView.snp.makeConstraints { make in
             make.top.equalTo(industryLabel.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(800)
+            make.height.equalTo(600)
         }
         
         createButton.snp.makeConstraints { make in

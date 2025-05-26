@@ -61,13 +61,13 @@ final class CreateCompanyViewController: UIViewController {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, environment -> NSCollectionLayoutSection? in
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .estimated(100),
-                heightDimension: .absolute(40)
+                heightDimension: .absolute(26)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(40)
+                heightDimension: .estimated(26)
             )
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
             group.interItemSpacing = .fixed(10)
@@ -142,7 +142,15 @@ extension CreateCompanyViewController {
                 } else {
                     self.selectedIndexPaths.insert(indexPath)
                 }
-                self.createCompanyView.industryCollectionView.reloadItems(at: [indexPath])
+                
+                // ✅ reload 없이 셀 직접 업데이트, 애니메이션 적용
+                if let cell = self.createCompanyView.industryCollectionView.cellForItem(at: indexPath) as? IndustryPickerCollectionViewCell {
+                    let isSelected = self.selectedIndexPaths.contains(indexPath)
+                    UIView.animate(withDuration: 0.25) {
+                        cell.setColor(isSelected)
+                    }
+                }
+                
             })
             .disposed(by: disposeBag)
         

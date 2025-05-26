@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
 
-        let mainVC = UINavigationController(rootViewController: MainViewController())
+        let mainVC = UINavigationController(rootViewController: CreateCompanyViewController(viewModel: CreateCompanyViewModel(mode: .create)))
         let dummyHistoryVC = UIViewController()
         let tabBarController = UITabBarController()
         tabBarController.setViewControllers([mainVC, dummyHistoryVC], animated: false)
@@ -31,6 +31,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
         self.window = window
+        
+        NetworkManager.shared.companyUUID = Utils.getDeviceUUID()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

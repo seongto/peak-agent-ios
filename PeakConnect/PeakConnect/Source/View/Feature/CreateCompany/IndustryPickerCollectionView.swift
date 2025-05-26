@@ -23,10 +23,10 @@ final class IndustryPickerCollectionView: UICollectionView {
         
         
         return UICollectionViewCompositionalLayout { sectionIndex, environment -> NSCollectionLayoutSection? in
-            let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(100), heightDimension: .absolute(40))
+            let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(100), heightDimension: .absolute(26))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(40))
+            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(26))
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
             group.interItemSpacing = .fixed(10)
 

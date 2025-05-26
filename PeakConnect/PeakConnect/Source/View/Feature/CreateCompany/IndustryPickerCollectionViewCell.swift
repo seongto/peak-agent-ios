@@ -7,12 +7,10 @@ final class IndustryPickerCollectionViewCell: UICollectionViewCell {
     static let id = "IndustryPickerCollectionViewCell"
     
     private let tagButton = UIButton().then {
-        $0.backgroundColor = .yellow
-        $0.tintColor = .black
-        $0.setTitleColor(.black, for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 14)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
-        $0.layer.cornerRadius = 10
+        $0.setTitleColor(.white, for: .normal)
+        $0.titleLabel?.font = UIFont(name: "Pretendard-Regular", size: 14)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 10, bottom: 7, right: 10)
+        $0.layer.cornerRadius = 13
         $0.clipsToBounds = true
     }
     
@@ -48,6 +46,6 @@ extension IndustryPickerCollectionViewCell {
     }
     
     func setColor(_ isSelected: Bool) {
-        tagButton.backgroundColor = isSelected ? .lightGray : .white
+        tagButton.backgroundColor = isSelected ? .primary : .disabled
     }
 }

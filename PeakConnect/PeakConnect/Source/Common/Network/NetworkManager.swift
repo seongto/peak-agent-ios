@@ -75,9 +75,18 @@ extension NetworkManager {
         name: String,
         industry: String,
         description: String,
+        mode: CreateCompanyMode,
         completion: @escaping (Result<String, AFError>) -> Void
     ) {
-        let endpoint = "company/new"
+        var endpoint = ""
+
+        switch mode {
+        case .create:
+            endpoint = "company/new"
+        case .edit(_):
+            endpoint = "company/edit"
+        }
+        
         let parameters: Parameters = [
             "name": name,
             "industry": industry,

@@ -88,7 +88,13 @@ extension CreateCompanyViewModel {
         input.registerButtonTapped
             .withUnretained(self)
             .subscribe(onNext: { owner, _ in
-                owner.registerCompany()
+            
+                if let company = owner.companyRelay.value {
+                    owner.registerCompany(mode: .edit(company: company))
+
+                } else {
+                    owner.registerCompany(mode: .create)
+                }
             })
             .disposed(by: disposeBag)
         
@@ -105,7 +111,7 @@ extension CreateCompanyViewModel {
 
 extension CreateCompanyViewModel {
     
-    private func registerCompany() {
+    private func registerCompany(mode: CreateCompanyMode) {
         // 테스트용 UUID 직접 세팅
         NetworkManager.shared.companyUUID = "12345678-1234-1234-1234-123456789012"
         
@@ -113,7 +119,8 @@ extension CreateCompanyViewModel {
         NetworkManager.shared.registerCompany(
             name: companyName,
             industry: industryText,
-            description: companyDescription
+            description: companyDescription,
+            mode: mode
         ) { result in
             switch result {
             case .success(let uuid):

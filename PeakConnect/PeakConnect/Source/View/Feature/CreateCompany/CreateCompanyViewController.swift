@@ -164,6 +164,16 @@ extension CreateCompanyViewController {
                 owner.createCompanyView.companyDescriptionCountLabel.text = text
             })
             .disposed(by: disposeBag)
+        
+        output.complete
+            .drive(with: self, onNext: { owner, _  in
+                owner.gobackMain()
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func gobackMain() {
+        navigationController?.popViewController(animated: true)
     }
 }
 

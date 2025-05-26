@@ -149,10 +149,12 @@ extension CreateCompanyViewController {
         let name = createCompanyView.companyNameTextField.rx.text.orEmpty.skip(1).asObservable()
         let description = createCompanyView.companyDescriptionTextField.rx.text.orEmpty.skip(1).asObservable()
         
+        let registerbuttonTapped = createCompanyView.createButton.rx.tap.asObservable()
+        
         let input = CreateCompanyViewModel.Input(
             companyNameTextFieldInput: name,
             companyDescriptionTextFieldInput: description,
-            industryButtonTapped: createCompanyView.industryCollectionView.rx.modelSelected(Industry.self).asObservable()
+            industryButtonTapped: createCompanyView.industryCollectionView.rx.modelSelected(Industry.self).asObservable(), registerButtonTapped: registerbuttonTapped
         )
         
         let output = createCompanyViewModel.transform(input: input)

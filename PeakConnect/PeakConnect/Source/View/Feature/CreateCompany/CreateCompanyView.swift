@@ -107,7 +107,7 @@ final class CreateCompanyView: UIView {
 
     
     // 등록하기 버튼
-    private let createButton = UIButton(type: .system).then {
+    let createButton = UIButton(type: .system).then {
         $0.backgroundColor = .primary
         $0.tintColor = .white
         $0.layer.cornerRadius = 25

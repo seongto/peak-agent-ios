@@ -14,10 +14,9 @@ final class CreateCompanyView: UIView {
     // MARK: - UI Components
     
     // 로고 라벨
-    private let logoLabel = UILabel().then {
-        $0.text = "Peak Connect"
-        $0.font = .systemFont(ofSize: 24, weight: .bold)
-        $0.textAlignment = .left
+    private let logoImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.image = UIImage(named: "TopLogo")
     }
     
     // 회사 설명 라벨
@@ -81,7 +80,7 @@ final class CreateCompanyView: UIView {
         $0.textAlignment = .left
     }
     
-    let companyDescriptionTextField = UITextView().then {
+    let companyDescriptionTextView = UITextView().then {
         $0.backgroundColor = .text
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
         $0.textColor = .white
@@ -137,12 +136,12 @@ extension CreateCompanyView {
         [ contentView ].forEach { scrollView.addSubview($0) }
         
         [
-            logoLabel,
+            logoImageView,
             descriptionLabel,
             companyNameLabel,
             companyNameTextField,
             companyDescriptionLabel,
-            companyDescriptionTextField,
+            companyDescriptionTextView,
             companyDescriptionCountLabel,
             industryLabel,
             industryCollectionView,
@@ -160,15 +159,16 @@ extension CreateCompanyView {
             make.width.equalToSuperview()
         }
 
-        logoLabel.snp.makeConstraints { make in
+        logoImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(30)
+            make.leading.equalToSuperview().inset(20)
+            make.height.equalTo(25)
+            make.width.equalTo(190) // 예시: 너비 고정값
         }
         
         descriptionLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
-            make.top.equalTo(logoLabel.snp.bottom).offset(16)
+            make.top.equalTo(logoImageView.snp.bottom).offset(40)
         }
         
         companyNameLabel.snp.makeConstraints { make in
@@ -195,14 +195,14 @@ extension CreateCompanyView {
             make.height.equalTo(20)
         }
         
-        companyDescriptionTextField.snp.makeConstraints { make in
+        companyDescriptionTextView.snp.makeConstraints { make in
             make.top.equalTo(companyDescriptionLabel.snp.bottom).offset(15)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(145)
         }
         
         industryLabel.snp.makeConstraints { make in
-            make.top.equalTo(companyDescriptionTextField.snp.bottom).offset(32)
+            make.top.equalTo(companyDescriptionTextView.snp.bottom).offset(32)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(20)
         }

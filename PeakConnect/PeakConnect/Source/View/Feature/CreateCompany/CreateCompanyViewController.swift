@@ -147,7 +147,7 @@ extension CreateCompanyViewController {
             .disposed(by: disposeBag)
         
         let name = createCompanyView.companyNameTextField.rx.text.orEmpty.skip(1).asObservable()
-        let description = createCompanyView.companyDescriptionTextField.rx.text.orEmpty.skip(1).asObservable()
+        let description = createCompanyView.companyDescriptionTextView.rx.text.orEmpty.skip(1).asObservable()
         
         let registerbuttonTapped = createCompanyView.createButton.rx.tap.asObservable()
         

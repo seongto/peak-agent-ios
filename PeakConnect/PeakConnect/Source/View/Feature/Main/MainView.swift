@@ -13,38 +13,83 @@ class MainView: UIView {
 
     // MARK: - UI Components
     
-    // 맵 타이틀 라벨
-    let titleLabel = UILabel().then {
-        $0.text = "Peak Connect"
-        $0.font = UIFont.boldSystemFont(ofSize: 24)
+    // Top logo image view
+    let topLogoImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.image = UIImage(named: "TopLogo")
     }
     
-    // 회사명 표시 라벨
+    // Company Info Container View
+    let companyInfoContainerView = UIView().then {
+        $0.backgroundColor = UIColor(white: 1, alpha: 0.1)
+        $0.layer.cornerRadius = 12
+    }
+    
+    let greetingLabel = UILabel().then {
+        $0.text = "안녕하세요,"
+        $0.font = UIFont.systemFont(ofSize: 16)
+        $0.textColor = .white
+    }
+    
     let companyNameLabel = UILabel().then {
-        $0.text = "<회사명>"
-        $0.font = UIFont.systemFont(ofSize: 20)
+        $0.text = "더선한 주식회사 님"
+        $0.font = UIFont.boldSystemFont(ofSize: 20)
+        $0.textColor = .white
     }
     
-    // 산업군 태그들을 보여주는 스택
-    let industryTagsStack = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 8
-        $0.distribution = .fillEqually
-    }
-    
-    // 회사 정보 수정 버튼
     let editCompanyButton = UIButton(type: .system).then {
-        $0.setTitle("회사 정보 수정", for: .normal)
-        $0.setTitleColor(.systemBlue, for: .normal)
+        $0.setImage(UIImage(systemName: "pencil"), for: .normal)
+        $0.tintColor = .white
+        $0.backgroundColor = .primary
+        $0.layer.cornerRadius = 16
+    }
+    
+    let industryTagsStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 5
+        stackView.distribution = .fillEqually
+        
+        let tags = ["산업군 태그", "산업군 태그", "산업군 태그", "산업군 태그"]
+        for tag in tags {
+            let tagLabel = UILabel().then { label in
+                label.text = tag
+                label.font = UIFont(name: "Pretendard-Medium", size: 10) ?? UIFont.systemFont(ofSize: 10)
+                label.backgroundColor = UIColor.clear
+                label.textColor = .white
+                label.textAlignment = .center
+                label.layer.borderWidth = 1
+                label.layer.borderColor = UIColor.white.cgColor
+                label.layer.cornerRadius = 12
+                label.clipsToBounds = true
+            }
+
+            tagLabel.snp.makeConstraints { make in
+                make.width.equalTo(66)
+                make.height.equalTo(26)
+            }
+
+            stackView.addArrangedSubview(tagLabel)
+        }
+
+        return stackView
+    }()
+    
+    // Map image view
+    let mapImageView = UIImageView().then {
+        $0.image = UIImage(named: "MapImage")
+        $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 15
     }
     
     // 지도에서 리드 찾기 버튼
     let mapSearchButton = UIButton(type: .system).then {
         $0.setTitle("지도에서 리드찾기", for: .normal)
-        $0.backgroundColor = .systemOrange
-        $0.setTitleColor(.black, for: .normal)
-        $0.layer.cornerRadius = 15
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20)
+        $0.backgroundColor = .primary
+        $0.setTitleColor(.white, for: .normal)
+        $0.layer.cornerRadius = 25
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 16)
     }
 
     // MARK: - Init
@@ -60,51 +105,63 @@ class MainView: UIView {
 
     // MARK: - Setup
     private func setupViews() {
-        backgroundColor = .white
+        backgroundColor = .black
         
-        [titleLabel, companyNameLabel, industryTagsStack, editCompanyButton, mapSearchButton].forEach {
-            addSubview($0)
-        }
+        addSubview(topLogoImageView)
+        addSubview(companyInfoContainerView)
+        addSubview(mapImageView)
+        addSubview(mapSearchButton)
         
-        for tag in ["산업군 태그", "산업군 태그", "산업군 태그", "산업군 태그"] {
-            let tagLabel = UILabel()
-            tagLabel.text = tag
-            tagLabel.font = UIFont.systemFont(ofSize: 14)
-            tagLabel.backgroundColor = .systemGray5
-            tagLabel.layer.cornerRadius = 8
-            tagLabel.clipsToBounds = true
-            tagLabel.textAlignment = .center
-            industryTagsStack.addArrangedSubview(tagLabel)
+        [greetingLabel, companyNameLabel, editCompanyButton, industryTagsStackView].forEach {
+            companyInfoContainerView.addSubview($0)
         }
     }
     
-    // 각 컴포넌트의 오토레이아웃 제약 조건 설정
     private func setupLayout() {
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(24)
-            make.leading.equalToSuperview().offset(20)
+        topLogoImageView.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).inset(20)
+            make.leading.equalToSuperview().inset(20)
+            make.height.equalTo(25)
+            make.width.equalTo(190)
         }
-
+        
+        companyInfoContainerView.snp.makeConstraints { make in
+            make.top.equalTo(topLogoImageView.snp.bottom).offset(40)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(149)
+        }
+        
+        greetingLabel.snp.makeConstraints { make in
+            make.top.equalTo(companyInfoContainerView).inset(20)
+            make.leading.equalTo(companyInfoContainerView).inset(20)
+        }
+        
         companyNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(40)
-            make.leading.equalTo(titleLabel)
+            make.top.equalTo(greetingLabel).inset(3)
+            make.leading.equalToSuperview().inset(20)
         }
-
-        industryTagsStack.snp.makeConstraints { make in
-            make.top.equalTo(companyNameLabel.snp.bottom).offset(30)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(30)
-        }
-
+        
         editCompanyButton.snp.makeConstraints { make in
-            make.top.equalTo(industryTagsStack.snp.bottom).offset(20)
-            make.leading.equalTo(titleLabel)
+            make.top.trailing.equalToSuperview().inset(16)
+            make.size.equalTo(40)
         }
-
-        mapSearchButton.snp.makeConstraints { make in
-            make.top.equalTo(editCompanyButton.snp.bottom).offset(40)
+        
+        industryTagsStackView.snp.makeConstraints { make in
+            make.top.equalTo(companyNameLabel.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(140)
+            make.bottom.equalToSuperview().inset(16)
+        }
+        
+        mapImageView.snp.makeConstraints { make in
+            make.top.equalTo(companyInfoContainerView.snp.bottom).offset(50)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.width.equalTo(260)
+        }
+        
+        mapSearchButton.snp.makeConstraints { make in
+            make.top.equalTo(mapImageView.snp.bottom).offset(30)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(50)
         }
     }
 }

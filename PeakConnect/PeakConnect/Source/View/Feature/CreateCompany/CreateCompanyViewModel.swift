@@ -20,6 +20,7 @@ final class CreateCompanyViewModel {
     private var countRelay = BehaviorRelay<String>(value: "0/100")
     private var industryRelay = BehaviorRelay<[Industry]>(value: [])
     private var completeRelay = PublishRelay<Void>()
+    private var companyRelay = BehaviorRelay<Company?>(value: nil)
     
     private var companyName: String = ""
     private var companyDescription: String = ""
@@ -28,12 +29,12 @@ final class CreateCompanyViewModel {
     private let disposeBag = DisposeBag()
     
     init(mode: CreateCompanyMode) {
-        
         switch mode {
         case .edit(let company):
             companyName = company.name
             companyDescription = company.description
             industy = company.industry
+            companyRelay.accept(company)
         case .create:
             break
         }
@@ -53,6 +54,7 @@ extension CreateCompanyViewModel {
         let companyDescriptionCount: Driver<String>
         let industry: Driver<[Industry]>
         let complete: Driver<Void>
+        let company: Driver<Company?>
     }
     
     func transform(input: Input) -> Output {
@@ -93,7 +95,8 @@ extension CreateCompanyViewModel {
         return Output(
             companyDescriptionCount: countRelay.asDriver(onErrorDriveWith: .empty()),
             industry: industryRelay.asDriver(onErrorDriveWith: .empty()),
-            complete: completeRelay.asDriver(onErrorDriveWith: .empty())
+            complete: completeRelay.asDriver(onErrorDriveWith: .empty()),
+            company: companyRelay.asDriver(onErrorDriveWith: .empty())
         )
     }
 }

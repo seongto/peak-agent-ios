@@ -170,6 +170,14 @@ extension CreateCompanyViewController {
                 owner.gobackMain()
             })
             .disposed(by: disposeBag)
+        
+        output.company
+            .drive(with: self, onNext: { owner, company in
+                guard let company = company else { return }
+                owner.createCompanyView.companyNameTextField.text = company.name
+                owner.createCompanyView.companyDescriptionTextView.text = company.description
+            })
+            .disposed(by: disposeBag)
     }
     
     private func gobackMain() {

@@ -111,10 +111,7 @@ extension CreateCompanyViewModel {
 
 extension CreateCompanyViewModel {
     
-    private func registerCompany(mode: CreateCompanyMode) {
-        // 테스트용 UUID 직접 세팅
-        NetworkManager.shared.companyUUID = "12345678-1234-1234-1234-123456789012"
-        
+    private func registerCompany(mode: CreateCompanyMode) {        
         let industryText = industy.map { $0.name }.joined(separator: ",")
         NetworkManager.shared.registerCompany(
             name: companyName,

@@ -59,7 +59,7 @@ final class CreateCompanyView: UIView {
         $0.layer.cornerRadius = 10
     }
     
-    private let companyDescriptionCountLabel = UILabel().then {
+    let companyDescriptionCountLabel = UILabel().then {
         $0.text = "1/100"
         $0.textColor = .lightGray
         $0.textAlignment = .right

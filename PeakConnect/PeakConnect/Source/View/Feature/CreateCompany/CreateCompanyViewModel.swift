@@ -63,7 +63,7 @@ extension CreateCompanyViewModel {
         input.companyDescriptionTextFieldInput
             .withUnretained(self)
             .subscribe(onNext: { owner, description in
-                print(description)
+                owner.countRelay.accept("\(description.count)/\(100)")
             })
             .disposed(by: disposeBag)
         

@@ -107,6 +107,12 @@ extension CreateCompanyViewController {
         )
         
         let output = createCompanyViewModel.transform(input: input)
+        
+        output.companyDescriptionCount
+            .drive(with: self, onNext: { owner, text in
+                owner.createCompanyView.companyDescriptionCountLabel.text = text
+            })
+            .disposed(by: disposeBag)
     }
 }
 

@@ -174,8 +174,8 @@ extension CreateCompanyViewController {
         output.company
             .drive(with: self, onNext: { owner, company in
                 guard let company = company else { return }
-                owner.createCompanyView.companyNameTextField.text = company.name
-                owner.createCompanyView.companyDescriptionTextView.text = company.description
+                owner.createCompanyView.setupEditMode(company)
+                owner.navigation()
                 
                 // 표시할 선택된 industry 버튼 설정
                 let allSections = IndustryPickerData.categories.map { $0.industries }.flatMap { $0 }
@@ -195,6 +195,16 @@ extension CreateCompanyViewController {
     
     private func gobackMain() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    private func navigation() {
+        navigationController?.navigationBar.isHidden = false
+        let titleLabel = UILabel()
+        titleLabel.text = "회사 정보 수정"
+        titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
+        titleLabel.textColor = .label
+        navigationItem.titleView = titleLabel
+
     }
 }
 

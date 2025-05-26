@@ -221,3 +221,19 @@ extension CreateCompanyView {
         }
     }
 }
+
+extension CreateCompanyView {
+    
+    func setupEditMode(_ company: Company) {
+        logoImageView.isHidden = true
+        descriptionLabel.isHidden = true
+        createButton.setTitle("수정하기", for: .normal)
+        
+        companyNameTextField.text = company.name
+        companyDescriptionTextView.text = company.description
+        
+        companyNameLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(20)
+        }
+    }
+}

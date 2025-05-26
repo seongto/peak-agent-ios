@@ -10,7 +10,7 @@ import Foundation
 extension UserDefaults {
     
     private enum Keys {
-        static let isBegginer = "isBegginer"
+        static let isBegginer = "isBeggineedddddeeeeewr"
     }
     
     var isBegginer: Bool {

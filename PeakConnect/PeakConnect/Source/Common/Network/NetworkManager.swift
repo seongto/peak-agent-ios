@@ -71,6 +71,14 @@ extension NetworkManager {
         let uuid: String
     }
 
+    struct CompanyInfo: Codable {
+        let uuid: String?
+        let name: String
+        let industry: String
+        let description: String
+        // Add more fields as needed based on the API response
+    }
+
     func registerCompany(
         name: String,
         industry: String,
@@ -101,6 +109,33 @@ extension NetworkManager {
                 completion(.failure(error))
             }
         }
+    }
+    
+    func requestCompany(completion: @escaping (Result<CompanyInfo, AFError>) -> Void) {
+        let endpoint = "company/info"
+        guard let url = URL(string: baseURL + endpoint) else {
+            print("Invalid URL")
+            return
+        }
+        AF.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: commonHeaders)
+            .validate(statusCode: 200..<300)
+            .responseString(encoding: .utf8) { response in
+                print("Raw response: \(response.value ?? "nil")")
+            }
+            .responseDecodable(of: ApiResponse<CompanyInfo>.self, decoder: JSONDecoder()) { response in
+                switch response.result {
+                case .success(let apiResponse):
+                    if apiResponse.success, let company = apiResponse.data {
+                        completion(.success(company))
+                    } else {
+                        let errorMsg = apiResponse.message ?? "Unknown API error"
+                        print("API Error: \(errorMsg)")
+                        completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
     }
 }
  

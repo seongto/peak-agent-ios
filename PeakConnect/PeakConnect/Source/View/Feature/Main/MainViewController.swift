@@ -46,9 +46,16 @@ extension MainViewController {
         let output = mainViewModel.transform(input: input)
         
         output.isBeginner
+            .skip(1)
             .drive(with: self, onNext: { owner, _ in
                 print("dd")
                 owner.connectCreateCompanyView()
+            })
+            .disposed(by: disposeBag)
+        
+        output.company
+            .drive(with: self, onNext: { owner, company in
+                owner.mainView.setupData(company: company)
             })
             .disposed(by: disposeBag)
     }
@@ -60,7 +67,8 @@ extension MainViewController {
     private func connectCreateCompanyView() {
         let createCompanyViewModel = CreateCompanyViewModel(mode: .create)
         let createCompanyViewController = CreateCompanyViewController(viewModel: createCompanyViewModel)
-        createCompanyViewController.modalPresentationStyle = .overFullScreen
-        present(createCompanyViewController, animated: false)
+
+        navigationController?.pushViewController(createCompanyViewController, animated: false)
+
     }
 }

@@ -204,7 +204,7 @@ extension CreateCompanyViewController {
     private func gobackMain(mode: CreateCompanyMode) {
         switch mode {
         case .create:
-            dismiss(animated: true)
+            navigationController?.popViewController(animated: true)
         case .edit(_):
             navigationController?.popViewController(animated: true)
         }

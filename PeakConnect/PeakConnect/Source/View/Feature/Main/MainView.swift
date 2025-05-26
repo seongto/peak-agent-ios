@@ -26,7 +26,7 @@ class MainView: UIView {
     }
     
     let greetingLabel = UILabel().then {
-        $0.text = "안녕하세요,"
+        $0.text = "안녕하세요"
         $0.font = UIFont.systemFont(ofSize: 16)
         $0.textColor = .white
     }
@@ -163,5 +163,13 @@ class MainView: UIView {
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(50)
         }
+    }
+}
+
+
+extension MainView {
+    
+    func setupData(company: Company) {
+        companyNameLabel.text = "\(company.name) 님"
     }
 }

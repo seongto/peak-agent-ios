@@ -32,6 +32,7 @@ final class CreateCompanyViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
     private var dataSource: RxCollectionViewSectionedReloadDataSource<SectionOfIndustries>!
+    private var selectedIndexPaths = Set<IndexPath>()
     
     init(viewModel: CreateCompanyViewModel) {
         self.createCompanyViewModel = viewModel
@@ -65,7 +66,10 @@ final class CreateCompanyViewController: UIViewController {
                     withReuseIdentifier: IndustryPickerCollectionViewCell.id,
                     for: indexPath
                 ) as? IndustryPickerCollectionViewCell else { return UICollectionViewCell() }
+                let isSelected = self.selectedIndexPaths.contains(indexPath)
                 cell.setTitle(industry.name)
+                cell.setColor(isSelected)
+                cell.layer.cornerRadius = 10
                 cell.contentView.isUserInteractionEnabled = false
                 return cell
             },
@@ -95,6 +99,18 @@ extension CreateCompanyViewController {
         }
         Observable.just(sections)
             .bind(to: createCompanyView.industryCollectionView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
+        createCompanyView.industryCollectionView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                guard let self = self else { return }
+                if self.selectedIndexPaths.contains(indexPath) {
+                    self.selectedIndexPaths.remove(indexPath)
+                } else {
+                    self.selectedIndexPaths.insert(indexPath)
+                }
+                self.createCompanyView.industryCollectionView.reloadItems(at: [indexPath])
+            })
             .disposed(by: disposeBag)
         
         let name = createCompanyView.companyNameTextField.rx.text.orEmpty.skip(1).asObservable()

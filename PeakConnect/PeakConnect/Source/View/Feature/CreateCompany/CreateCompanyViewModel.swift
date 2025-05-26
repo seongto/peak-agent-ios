@@ -18,7 +18,7 @@ enum CreateCompanyMode {
 final class CreateCompanyViewModel {
     
     private var countRelay = BehaviorRelay<String>(value: "0/100")
-    private var industryRelay = BehaviorRelay<[String]>(value: [])
+    private var industryRelay = BehaviorRelay<[Industry]>(value: [])
     
     private var companyName: String = ""
     private var companyDescription: String = ""
@@ -49,7 +49,7 @@ extension CreateCompanyViewModel {
     
     struct Output {
         let companyDescriptionCount: Driver<String>
-        let industry: Driver<[String]>
+        let industry: Driver<[Industry]>
     }
     
     func transform(input: Input) -> Output {
@@ -70,7 +70,14 @@ extension CreateCompanyViewModel {
         input.industryButtonTapped
             .withUnretained(self)
             .subscribe(onNext: { owner, string in
-                print(string)
+                if owner.industy.contains(string) {
+                    //
+                    //owner.industy.re
+                    owner.industryRelay.accept(owner.industy)
+                } else {
+                    owner.industy.append(string)
+                    owner.industryRelay.accept(owner.industy)
+                }
             })
             .disposed(by: disposeBag)
         

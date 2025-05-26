@@ -25,11 +25,12 @@ final class IndustryPickerCollectionView: UICollectionView {
 extension IndustryPickerCollectionView {
     
     private func setupLayout() {
+        backgroundColor = .clear
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         flowLayout.minimumInteritemSpacing = 8
         flowLayout.minimumLineSpacing = 8
-        flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 24, right: 16)
+        flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 24, right: 0)
         self.collectionViewLayout = flowLayout
     }
     

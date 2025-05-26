@@ -14,7 +14,8 @@ final class IndustryPickerHeaderView: UICollectionReusableView {
     static let id = "IndustryPickerHeaderView"
     
     private let titleLabel = UILabel().then {
-        $0.font = .preferredFont(forTextStyle: .headline)
+        $0.font = UIFont(name: "Pretendard-Medium", size: 16)
+        $0.textColor = .white
     }
 
     override init(frame: CGRect) {
@@ -35,7 +36,7 @@ extension IndustryPickerHeaderView {
         addSubview(titleLabel)
         
         titleLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview()
             make.top.bottom.equalToSuperview()
         }
     }

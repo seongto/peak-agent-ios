@@ -6,15 +6,44 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+import RxDataSources
+
+struct SectionOfIndustries {
+    var header: String
+    var items: [Industry]
+}
+
+extension SectionOfIndustries: SectionModelType {
+    typealias Item = Industry
+    
+    init(original: SectionOfIndustries, items: [Industry]) {
+        self = original
+        self.items = items
+    }
+}
 
 final class CreateCompanyViewController: UIViewController {
     
-    enum Section: Hashable {
-        case category(IndustryCategory)
+    private let createCompanyView = CreateCompanyView()
+    private var createCompanyViewModel: CreateCompanyViewModel
+    private let industrySelectedRelay = PublishRelay<Industry>()
+    
+    private let disposeBag = DisposeBag()
+    
+    private var dataSource: RxCollectionViewSectionedReloadDataSource<SectionOfIndustries>!
+    
+    private var selectedIndexPath: IndexPath?
+    
+    init(viewModel: CreateCompanyViewModel) {
+        self.createCompanyViewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
     }
     
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Industry>!
-    private let createCompanyView = CreateCompanyView()
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         view = createCompanyView
@@ -22,55 +51,77 @@ final class CreateCompanyViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        createCompanyView.industryCollectionView.delegate = self // 꼭 추가
+        
         setupDataSource()
-        applySnapshot()
+        bind()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        createCompanyView.industryCollectionView.allowsSelection = true
+        createCompanyView.industryCollectionView.isUserInteractionEnabled = true
     }
     
     private func setupDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, Industry>(collectionView: createCompanyView.industryCollectionView) {
-            (collectionView, indexPath, industry) -> UICollectionViewCell? in
-            
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: IndustryPickerCollectionViewCell.id,
-                for: indexPath
-            ) as? IndustryPickerCollectionViewCell else { return UICollectionViewCell() }
-            cell.setTitle(industry.name)
-            return cell
+        let sections = IndustryPickerData.categories.map { category in
+            SectionOfIndustries(header: category.name, items: category.industries)
         }
         
-        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
-            guard let header = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: IndustryPickerHeaderView.id,
-                for: indexPath
-            ) as? IndustryPickerHeaderView else {
-                return nil
+        Observable.just(sections)
+            .bind(to: createCompanyView.industryCollectionView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
+        dataSource = RxCollectionViewSectionedReloadDataSource<SectionOfIndustries>(
+            configureCell: { [weak self] dataSource, collectionView, indexPath, industry in
+                guard let self = self else { return UICollectionViewCell() }
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: IndustryPickerCollectionViewCell.id,
+                    for: indexPath
+                ) as? IndustryPickerCollectionViewCell else { return UICollectionViewCell() }
+                let isSelected = indexPath == self.selectedIndexPath
+                cell.backgroundColor = .red
+                cell.setTitle(industry.name)
+                cell.contentView.isUserInteractionEnabled = false
+                return cell
+            },
+            configureSupplementaryView: { [weak self] dataSource, collectionView, kind, indexPath in
+                guard let self = self else { return UICollectionReusableView() }
+                guard let header = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: IndustryPickerHeaderView.id,
+                    for: indexPath
+                ) as? IndustryPickerHeaderView else {
+                    return UICollectionReusableView()
+                }
+                let section = dataSource.sectionModels[indexPath.section]
+                header.setTitle(section.header)
+                return header
             }
-            
-            let section = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
-            switch section {
-            case .category(let category):
-                header.setTitle(category.name)
-            }
-            
-            return header
-        }
+        )
     }
-    
-    private func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Industry>()
-        
-        for category in IndustryPickerData.categories {
-            let section = Section.category(category)
-            snapshot.appendSections([section])
-            snapshot.appendItems(category.industries, toSection: section)
-        }
-        
-        dataSource.apply(snapshot, animatingDifferences: true)
-    }
-    
 }
+
+// MARK: - bind
+
+extension CreateCompanyViewController {
+    
+    private func bind() {
+        let name = createCompanyView.companyNameTextField.rx.text.orEmpty.skip(1).asObservable()
+        let description = createCompanyView.companyDescriptionTextField.rx.text.orEmpty.skip(1).asObservable()
+        
+        let input = CreateCompanyViewModel.Input(
+            companyNameTextFieldInput: name,
+            companyDescriptionTextFieldInput: description,
+            industryButtonTapped: createCompanyView.industryCollectionView.rx.modelSelected(Industry.self).asObservable()
+        )
+        
+        let output = createCompanyViewModel.transform(input: input)
+        
+    }
+}
+
+
+// MARK: - UICollectionViewDelegateFlowLayout
 
 extension CreateCompanyViewController: UICollectionViewDelegateFlowLayout {
     

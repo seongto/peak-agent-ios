@@ -40,7 +40,7 @@ final class CreateCompanyView: UIView {
         $0.textAlignment = .left
     }
     
-    private let companyNameTextField = UITextField().then {
+    let companyNameTextField = UITextField().then {
         $0.placeholder = " 회사명을 입력해주세요."
         $0.layer.borderColor = UIColor.lightGray.cgColor
         $0.layer.borderWidth = 1
@@ -52,7 +52,7 @@ final class CreateCompanyView: UIView {
         $0.textAlignment = .left
     }
     
-    private let companyDescriptionTextField = UITextField().then {
+    let companyDescriptionTextField = UITextField().then {
         $0.placeholder = " 회사에서 제공하는 서비스에 대해 입력해주세요."
         $0.layer.borderColor = UIColor.lightGray.cgColor
         $0.layer.borderWidth = 1

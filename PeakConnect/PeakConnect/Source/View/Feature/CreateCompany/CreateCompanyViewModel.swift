@@ -27,12 +27,14 @@ final class CreateCompanyViewModel {
     private let disposeBag = DisposeBag()
     
     init(mode: CreateCompanyMode) {
+        
         switch mode {
-        case .create:
         case .edit(let company):
             companyName = company.name
             companyDescription = company.description
             industy = company.industry
+        case .create:
+            break
         }
     }
 }
@@ -40,7 +42,6 @@ final class CreateCompanyViewModel {
 extension CreateCompanyViewModel {
     
     struct Input {
-        let viewWillAppear: Observable<Void>
         let companyNameTextFieldInput: Observable<String>
         let companyDescriptionTextFieldInput: Observable<String>
         let industryButtonTapped: Observable<Industry>
@@ -52,6 +53,26 @@ extension CreateCompanyViewModel {
     }
     
     func transform(input: Input) -> Output {
+        input.companyNameTextFieldInput
+            .withUnretained(self)
+            .subscribe(onNext: { owner, name in
+                print(name)
+            })
+            .disposed(by: disposeBag)
+        
+        input.companyDescriptionTextFieldInput
+            .withUnretained(self)
+            .subscribe(onNext: { owner, description in
+                print(description)
+            })
+            .disposed(by: disposeBag)
+        
+        input.industryButtonTapped
+            .withUnretained(self)
+            .subscribe(onNext: { owner, string in
+                print(string)
+            })
+            .disposed(by: disposeBag)
         
         return Output(
             companyDescriptionCount: countRelay.asDriver(onErrorDriveWith: .empty()),

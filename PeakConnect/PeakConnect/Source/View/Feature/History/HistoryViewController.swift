@@ -6,11 +6,15 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class HistoryViewController: UIViewController {
     
     private let historyView = HistoryView()
     private let historyViewModel = HistoryViewModel()
+    
+    private let disposeBag = DisposeBag()
     
     override func loadView() {
         view = historyView
@@ -20,31 +24,32 @@ class HistoryViewController: UIViewController {
         super.viewDidLoad()
         bind()
         historyView.colletionView.delegate = self
-        historyView.colletionView.dataSource = self
+
     }
 }
 
 extension HistoryViewController {
     
     private func bind() {
+        let viewWillAppear = rx.methodInvoked(#selector(viewWillAppear)).map { _ in }
+        let input = HistoryViewModel.Input(viewWillAppear: viewWillAppear)
+        let output = historyViewModel.transform(input: input)
         
-    }
-}
-
-extension HistoryViewController: UICollectionViewDataSource {
-    
-}
-
-extension HistoryViewController: UICollectionViewDelegate {
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        6
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HistoryViewCollectionViewCell.id, for: indexPath) as? HistoryViewCollectionViewCell else { return UICollectionViewCell() }
-        
-        return cell
+        output.history
+            .do(onNext: { [weak self] historys in
+                guard let self = self else { return }
+                //guard let historys = historys else { return }
+                //let starIsEmpty = historys.isEmpty ? false : true
+                // 스타가 없으면 스타없음라벨 활성화
+                //self.starListView.noStarLabel.isHidden = starIsEmpty
+            })
+            .drive(historyView.colletionView.rx.items(
+                cellIdentifier: HistoryViewCollectionViewCell.id,
+                cellType: HistoryViewCollectionViewCell.self)) { row, element, cell in
+                    print("ddddd")
+                    cell.configure(history: element!)
+                }
+                .disposed(by: disposeBag)
     }
 }
 

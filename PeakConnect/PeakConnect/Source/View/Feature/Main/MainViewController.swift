@@ -27,7 +27,6 @@ class MainViewController: UIViewController {
     mainView.mapSearchButton.addTarget(self, action: #selector(tapMapSearch), for: .touchUpInside)
         
         navigationController?.navigationBar.isHidden = true
-
         
     }
 

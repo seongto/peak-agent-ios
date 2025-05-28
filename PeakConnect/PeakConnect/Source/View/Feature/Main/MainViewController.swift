@@ -36,8 +36,6 @@ class MainViewController: UIViewController {
     // 지도에서 리드찾기 버튼 눌렀을 때 MapViewController로 이동
     @objc private func tapMapSearch() {
         let mapVC = MapViewController()
-        mapVC.hidesBottomBarWhenPushed = true
-        mapVC.loadViewIfNeeded()
         mapVC.mapView.showOnlyCurrentLocationMarker()
         navigationController?.pushViewController(mapVC, animated: true)
     }

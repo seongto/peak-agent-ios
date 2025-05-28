@@ -75,6 +75,7 @@ extension CreateCompanyViewController {
                 guard let company = company else { return }
                 owner.createCompanyView.setupEditMode(company)
                 owner.navigation()
+                print("test")
             })
             .disposed(by: disposeBag)
     }

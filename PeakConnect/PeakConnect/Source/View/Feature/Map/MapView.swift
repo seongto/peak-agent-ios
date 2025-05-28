@@ -123,6 +123,12 @@ class MapView: UIView {
         // 현재 위치 버튼 추가
         addSubview(currentLocationButton)
         
+        addSubview(leadResultsView)
+        leadResultsView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        leadResultsView.isHidden = true
+        
         // 모달 내부 컴포넌트 추가
         leadModalView.addSubview(backButton)
         leadModalView.addSubview(modalTitleLabel)
@@ -224,7 +230,19 @@ class MapView: UIView {
     }
 
     func showLeadResultsView() {
+        
+        leadModalView.isHidden = true
+        
+        showCurrentLocationMarker()
+        showLeadMarkers()
+        
+        addSubview(leadResultsView)
+        leadResultsView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         leadResultsView.isHidden = false
+        leadResultsView.showLeadResults()
     }
 
     func showOnlyCurrentLocationMarker() {

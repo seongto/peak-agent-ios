@@ -11,72 +11,138 @@ import Then
 
 class CompanyInfoCell: UICollectionViewCell {
     
-    // MARK: - 식별자
     static let identifier = "CompanyInfoCell"
     
-    // MARK: - UI Components
-    
-    private let imageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFill
-        $0.backgroundColor = .lightGray
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 8
-        $0.isHidden = true
+    private let container = UIView().then {
+        $0.backgroundColor = UIColor.primary
+        $0.layer.cornerRadius = 24
+        $0.layer.shadowColor = UIColor.black.cgColor
+        $0.layer.shadowOpacity = 0.15
+        $0.layer.shadowOffset = CGSize(width: 0, height: 2)
+        $0.layer.shadowRadius = 8
     }
     
     private let companyNameLabel = UILabel().then {
-        $0.font = .boldSystemFont(ofSize: 16)
+        $0.font = .boldSystemFont(ofSize: 20)
+        $0.textColor = UIColor.white
         $0.numberOfLines = 1
     }
     
-    private let additionalInfoLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14)
+    private let addressLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 16)
+        $0.textColor = UIColor.white
         $0.numberOfLines = 2
-        $0.textColor = .darkGray
     }
     
+    private let ceoButton = UIButton(type: .system).then {
+        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
+        $0.setTitleColor(UIColor.white, for: .normal)
+        $0.backgroundColor = UIColor(named: "primary-dark")
+        $0.layer.cornerRadius = 12
+        $0.clipsToBounds = true
+        $0.contentEdgeInsets = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        $0.setContentHuggingPriority(.required, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
+    }
+
+    private let establishedButton = UIButton(type: .system).then {
+        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
+        $0.setTitleColor(UIColor.white, for: .normal)
+        $0.backgroundColor = UIColor(named: "primary-dark")
+        $0.layer.cornerRadius = 12
+        $0.clipsToBounds = true
+        $0.contentEdgeInsets = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        $0.setContentHuggingPriority(.required, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
+    }
+    
+    private let siteButton = UIButton(type: .system).then {
+        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
+        $0.setTitleColor(UIColor.white, for: .normal)
+        $0.backgroundColor = UIColor(named: "primary-dark")
+        $0.layer.cornerRadius = 12
+        $0.clipsToBounds = true
+        $0.contentEdgeInsets = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        $0.setContentHuggingPriority(.required, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
+        $0.setTitle("사이트", for: .normal)
+        $0.isUserInteractionEnabled = true
+    }
+    
+    private let bottomStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 12
+        $0.alignment = .center
+        $0.distribution = .fillProportionally
+        $0.isLayoutMarginsRelativeArrangement = true
+        $0.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        // 셀 스타일 설정
-        contentView.backgroundColor = .red
-        contentView.layer.cornerRadius = 8
-        contentView.layer.shadowColor = UIColor.black.cgColor
-        contentView.layer.shadowOpacity = 0.1
-        contentView.layer.shadowOffset = CGSize(width: 0, height: 2)
-        contentView.layer.shadowRadius = 4
-        
-        // UI 추가
-        contentView.addSubview(imageView)
-        contentView.addSubview(companyNameLabel)
-        contentView.addSubview(additionalInfoLabel)
-        
-        imageView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().inset(8)
-            make.size.equalTo(CGSize(width: 44, height: 44))
-        }
-        
-        companyNameLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(8)
-            make.leading.equalTo(imageView.snp.trailing).offset(8)
-            make.trailing.equalToSuperview().inset(8)
-        }
-        
-        additionalInfoLabel.snp.makeConstraints { make in
-            make.top.equalTo(companyNameLabel.snp.bottom).offset(4)
-            make.leading.equalTo(companyNameLabel)
-            make.trailing.equalToSuperview().inset(8)
-            make.bottom.lessThanOrEqualToSuperview().inset(8)
-        }
+        setupUI()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        setupUI()
     }
     
-    // 셀에 데이터 설정
-    func configure(companyName: String, additionalInfo: String) {
+    private func setupUI() {
+        contentView.addSubview(container)
+        container.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(16)
+            make.width.equalTo(320)
+            make.height.equalTo(200)
+        }
+        
+        container.addSubview(companyNameLabel)
+        container.addSubview(addressLabel)
+        container.addSubview(bottomStackView)
+        
+        bottomStackView.addArrangedSubview(ceoButton)
+        bottomStackView.addArrangedSubview(establishedButton)
+        bottomStackView.addArrangedSubview(siteButton)
+        
+        companyNameLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(20)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+
+        addressLabel.snp.makeConstraints { make in
+            make.top.equalTo(companyNameLabel.snp.bottom).offset(8)
+            make.leading.trailing.equalTo(companyNameLabel)
+        }
+
+        bottomStackView.snp.makeConstraints { make in
+            make.top.equalTo(addressLabel.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(52)
+        }
+    }
+    
+    func configure(companyName: String, address: String, tags: String, ceo: String, established: String) {
+
         companyNameLabel.text = companyName
-        additionalInfoLabel.text = additionalInfo
+        addressLabel.text = address
+        ceoButton.setTitle(ceo, for: .normal)
+        establishedButton.setTitle(established, for: .normal)
+
+    }
+}
+
+
+class PaddingLabel: UILabel {
+    var padding = UIEdgeInsets.zero
+
+    override func drawText(in rect: CGRect) {
+        let insetRect = rect.inset(by: padding)
+        super.drawText(in: insetRect)
+    }
+
+    override var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        return CGSize(width: size.width + padding.left + padding.right,
+                      height: size.height + padding.top + padding.bottom)
     }
 }

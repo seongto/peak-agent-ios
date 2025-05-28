@@ -53,6 +53,7 @@ class MapLeadResultsView: UIView {
         addSubview(resultCollectionView)
         resultCollectionView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
+            make.bottom.equalToSuperview().inset(80)
             make.height.equalTo(200)
         }
 
@@ -77,11 +78,17 @@ extension MapLeadResultsView: UICollectionViewDataSource, UICollectionViewDelega
             return UICollectionViewCell()
         }
         let data = viewModel.companyData[indexPath.item]
-        cell.configure(companyName: data.name, additionalInfo: data.info)
+        cell.configure(
+            companyName: data.name,
+            address: data.address,
+            tags: data.tags,
+            ceo: data.ceo,
+            established: data.established
+        )
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 250, height: 150)
+        return CGSize(width: 320, height: 200)
     }
 }

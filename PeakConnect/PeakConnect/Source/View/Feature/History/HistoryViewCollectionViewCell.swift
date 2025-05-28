@@ -133,9 +133,17 @@ extension HistoryViewCollectionViewCell {
 extension HistoryViewCollectionViewCell {
     
     func configure(history: History) {
-        dateLabel.text = "추천 날짜 : \(history.createdAt)"
         addresLabel.text = history.location
         listTextLabel.text = history.leads
         countTextLabel.text = "총 \(history.count)개 업체"
+        
+        if let date = ISO8601DateFormatter().date(from: history.createdAt) {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy.MM.dd"
+            let formattedDate = formatter.string(from: date)
+            dateLabel.text = "추천 날짜 : \(formattedDate)"
+        } else {
+            dateLabel.text = "추천 날짜 : \(history.createdAt)"
+        }
     }
 }

@@ -26,8 +26,9 @@ class HistoryResultView: UIView {
         $0.font = UIFont(name: "Pretendard-Bold", size: 16)
     }
     
-    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
-        $0.backgroundColor = .yellow
+    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
+        $0.showsVerticalScrollIndicator = false
+        $0.register(HistoryResultCollectionViewCell.self, forCellWithReuseIdentifier: HistoryResultCollectionViewCell.id)
     }
 
     override init(frame: CGRect) {

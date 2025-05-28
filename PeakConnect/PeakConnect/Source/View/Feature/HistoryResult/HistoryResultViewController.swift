@@ -22,9 +22,47 @@ class HistoryResultViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        bind()
+        historyResultView.collectionView.delegate = self
+        historyResultView.collectionView.dataSource = self
     }
 }
 
-extension HistoryViewController {
+extension HistoryResultViewController {
     
+    private func bind() {
+        
+    }
+}
+
+extension HistoryResultViewController: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        print("test")
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: HistoryResultCollectionViewCell.id,
+            for: indexPath
+        ) as? HistoryResultCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        print("ddd")
+        return cell
+    }
+}
+
+extension HistoryResultViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 20
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        return CGSize(width: collectionView.frame.width, height: 87)
+    }
 }

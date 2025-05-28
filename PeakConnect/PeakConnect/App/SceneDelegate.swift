@@ -39,8 +39,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
         self.window = window
-        
-        NetworkManager.shared.companyUUID = Utils.getDeviceUUID()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -11,6 +11,7 @@ extension UserDefaults {
     
     private enum Keys {
         static let isBegginer = "isBegginer"
+        static let uuid = "uuid"
     }
     
     var isBegginer: Bool {
@@ -19,6 +20,15 @@ extension UserDefaults {
         }
         set {
             set(newValue, forKey: Keys.isBegginer)
+        }
+    }
+    
+    var uuid: String {
+        get {
+            string(forKey: Keys.uuid)!
+        }
+        set {
+            set(newValue, forKey: Keys.uuid)
         }
     }
 }

@@ -71,7 +71,6 @@ extension CreateCompanyViewModel {
         input.registerButtonTapped
             .withUnretained(self)
             .subscribe(onNext: { owner, _ in
-            
                 if let company = owner.companyRelay.value {
                     owner.registerCompany(mode: .edit(company: company))
 
@@ -103,6 +102,10 @@ extension CreateCompanyViewModel {
             case .success(let uuid):
                 UserDefaults.standard.isBegginer = true
                 self.completeRelay.accept(mode)
+                guard let uuid = uuid else {
+                    return
+                }
+                UserDefaults.standard.uuid = uuid
                 print("회사 등록 성공, UUID:", uuid)
             case .failure(let error):
                 print("회사 등록 실패:", error.localizedDescription)

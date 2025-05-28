@@ -191,7 +191,7 @@ extension CreateCompanyView {
         companyDescriptionTextView.text = company.description
         
         companyNameLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(20)
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).inset(20)
         }
     }
 }

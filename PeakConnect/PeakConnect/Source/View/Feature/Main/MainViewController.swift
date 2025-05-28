@@ -65,6 +65,7 @@ extension MainViewController {
         
         output.edit
             .drive(with: self, onNext: { owner, company in
+                print("dddd")
                 owner.connectCreateCompanyView(mode: .edit(company: company))
             })
             .disposed(by: disposeBag)
@@ -84,8 +85,6 @@ extension MainViewController {
 
         case .edit(_):
             navigationController?.pushViewController(createCompanyViewController, animated: true)
-
         }
-
     }
 }

@@ -83,10 +83,11 @@ class MapView: UIView {
         $0.imageEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 60, right: 0)
         $0.titleEdgeInsets = UIEdgeInsets(top: 80, left: -10, bottom: 40, right: 0)
     }
+    
     // 현재 위치로 이동 버튼
     let currentLocationButton = UIButton(type: .system).then {
 
-        $0.backgroundColor = UIColor(red: 26/255, green: 26/255, blue: 26/555, alpha: 1)
+        $0.backgroundColor = UIColor.background
         $0.tintColor = .white
         $0.layer.cornerRadius = 10
         $0.layer.shadowColor = UIColor.black.cgColor
@@ -122,12 +123,6 @@ class MapView: UIView {
         addSubview(leadModalView)
         // 현재 위치 버튼 추가
         addSubview(currentLocationButton)
-        
-        addSubview(leadResultsView)
-        leadResultsView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        leadResultsView.isHidden = true
         
         // 모달 내부 컴포넌트 추가
         leadModalView.addSubview(backButton)
@@ -181,7 +176,7 @@ class MapView: UIView {
         // 현재 위치 버튼 설정
         currentLocationButton.snp.makeConstraints { make in
             make.right.equalToSuperview().inset(20)
-            make.bottom.equalTo(leadModalView.snp.top).offset(-20)
+            make.bottom.equalTo(leadModalView.snp.top).offset(-30)
             make.width.height.equalTo(40)
         }
     }
@@ -212,7 +207,7 @@ class MapView: UIView {
         let leadCoordinates = viewModel.leadCoordinates
         for coord in leadCoordinates {
             let marker = NMFMarker(position: coord)
-            marker.iconImage = NMFOverlayImage(image: UIImage(systemName: "mappin")!)
+            marker.iconImage = NMFOverlayImage(image: UIImage(systemName: "flag.fill")!)
             marker.width = 40
             marker.height = 40
             marker.anchor = CGPoint(x: 0.5, y: 1.0)
@@ -236,11 +231,16 @@ class MapView: UIView {
         showCurrentLocationMarker()
         showLeadMarkers()
         
-        addSubview(leadResultsView)
-        leadResultsView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+        if leadResultsView.superview == nil {
+            mapContainerView.addSubview(leadResultsView)
         }
-        
+
+        leadResultsView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.height.equalTo(200)
+        }
+
         leadResultsView.isHidden = false
         leadResultsView.showLeadResults()
     }

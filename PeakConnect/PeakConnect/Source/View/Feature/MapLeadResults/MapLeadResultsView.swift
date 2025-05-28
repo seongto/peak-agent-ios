@@ -19,8 +19,8 @@ class MapLeadResultsView: UIView {
     let showAllResultsButton = UIButton(type: .system).then {
         $0.setTitle("추천 결과 전체 보기", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = .systemBlue
-        $0.layer.cornerRadius = 8
+        $0.backgroundColor = .background
+        $0.layer.cornerRadius = 14
         $0.titleLabel?.font = .boldSystemFont(ofSize: 14)
     }
     
@@ -48,17 +48,30 @@ class MapLeadResultsView: UIView {
     }
     
     private func setupUI() {
+        
         backgroundColor = .clear
-
+        
         addSubview(resultCollectionView)
         resultCollectionView.snp.makeConstraints { make in
-            make.leading.trailing.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview().inset(80)
-            make.height.equalTo(200)
+            make.height.equalTo(220)
+        }
+        resultCollectionView.isUserInteractionEnabled = false
+
+        addSubview(showAllResultsButton)
+        showAllResultsButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(20)
+            make.height.equalTo(30)
+            make.width.equalTo(160)
         }
 
         resultCollectionView.dataSource = self
         resultCollectionView.delegate = self
+
+        resultCollectionView.isUserInteractionEnabled = true
+        showAllResultsButton.isUserInteractionEnabled = true
     }
     
     // 데이터를 로드하여 추천 결과를 보여주는 메소드 (더미 데이터)

@@ -75,7 +75,14 @@ extension NetworkManager {
         let uuid: String?
         let name: String
         let description: String
-        // Add more fields as needed based on the API response
+    }
+    
+    struct HistoryInfo: Codable {
+        let id: Int
+        let created_at: String
+        let location: String
+        let leads: String
+        let count: Int
     }
 
     func registerCompany(
@@ -164,6 +171,38 @@ extension NetworkManager {
                     completion(.failure(error))
                 }
             }
+    } 
+    
+    func requestHistList(completion: @escaping (Result<[HistoryInfo], AFError>) -> Void) {
+        
+        companyUUID = UserDefaults.standard.uuid
+        
+        let endpoint = "lead/recommendation/list"
+        guard let url = URL(string: baseURL + endpoint) else {
+            print("Invalid URL")
+            return
+        }
+        
+        AF.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: commonHeaders)
+            .validate(statusCode: 200..<300)
+            .responseString(encoding: .utf8) { response in
+                print("Raw response: \(response.value ?? "nil")")
+            }
+            .responseDecodable(of: ApiResponse<[HistoryInfo]>.self, decoder: JSONDecoder()) { response in
+                switch response.result {
+                case .success(let apiResponse):
+                    if apiResponse.success, let history = apiResponse.data {
+                        completion(.success(history))
+                    } else {
+                        let errorMsg = apiResponse.message ?? "Unknown API error"
+                        print("API Error: \(errorMsg)")
+                        completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+
     }
 }
  

@@ -14,7 +14,6 @@ class HistoryViewCollectionViewCell: UICollectionViewCell {
     static let id = "HistoryViewCollectionViewCell"
     
     private let dateLabel = BaseLabel().then {
-        $0.text = "추천 날짜 : 2025.05.03"
         $0.textColor = .white
         $0.backgroundColor = .textPrimary
         $0.font = UIFont(name: "Pretendard-Regular", size: 10)
@@ -29,9 +28,7 @@ class HistoryViewCollectionViewCell: UICollectionViewCell {
     }
     
     private let addresLabel = UILabel().then {
-        $0.text = "서울시 강남구 역삼동 148"
         $0.font = UIFont(name: "Pretendard-Bold", size: 18)
-        $0.textAlignment = .left
     }
     
     private let separatorView = UIView().then {
@@ -44,7 +41,6 @@ class HistoryViewCollectionViewCell: UICollectionViewCell {
     }
     
     private let listTextLabel = UILabel().then {
-        $0.text = "더선한, 힐링페이퍼, 마이크로소프트..."
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
     }
     
@@ -54,7 +50,6 @@ class HistoryViewCollectionViewCell: UICollectionViewCell {
     }
     
     private let countTextLabel = UILabel().then {
-        $0.text = "총 10개 업체"
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
     }
     
@@ -112,21 +107,35 @@ extension HistoryViewCollectionViewCell {
         listLabel.snp.makeConstraints { make in
             make.top.equalTo(separatorView.snp.bottom).offset(10)
             make.leading.equalToSuperview().inset(20)
+            make.width.equalTo(80)
         }
-        
+
         listTextLabel.snp.makeConstraints { make in
-            make.leading.equalTo(listLabel.snp.trailing).offset(10)
+            make.leading.equalTo(listLabel.snp.trailing)
             make.top.equalTo(separatorView.snp.bottom).offset(10)
+            make.trailing.equalToSuperview().inset(20)
         }
         
         countLabel.snp.makeConstraints { make in
             make.top.equalTo(listLabel.snp.bottom).offset(10)
             make.leading.equalToSuperview().inset(20)
+            make.width.equalTo(80)
         }
         
         countTextLabel.snp.makeConstraints { make in
-            make.leading.equalTo(countLabel.snp.trailing).offset(10)
+            make.leading.equalTo(countLabel.snp.trailing)
             make.top.equalTo(listLabel.snp.bottom).offset(10)
+            make.bottom.equalToSuperview().inset(20)
         }
+    }
+}
+
+extension HistoryViewCollectionViewCell {
+    
+    func configure(history: History) {
+        dateLabel.text = "추천 날짜 : \(history.createdAt)"
+        addresLabel.text = history.location
+        listTextLabel.text = history.leads
+        countTextLabel.text = "총 \(history.count)개 업체"
     }
 }

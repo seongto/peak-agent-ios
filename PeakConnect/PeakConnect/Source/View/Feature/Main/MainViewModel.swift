@@ -74,5 +74,6 @@ extension MainViewModel {
             case .failure(let error):
                 print("회사 조회 실패:", error.localizedDescription)
             }
-        }    }
+        }
+    }
 }

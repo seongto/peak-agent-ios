@@ -13,7 +13,7 @@ class MainView: UIView {
 
     // MARK: - UI Components
     
-    // Top logo image view
+    // 탑 로고 이미지뷰
     let topLogoImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.image = UIImage(named: "TopLogo")

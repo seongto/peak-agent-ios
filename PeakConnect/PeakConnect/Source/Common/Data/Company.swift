@@ -8,5 +8,4 @@
 struct Company {
     let name: String
     let description: String
-    let industry: [Industry]
 }

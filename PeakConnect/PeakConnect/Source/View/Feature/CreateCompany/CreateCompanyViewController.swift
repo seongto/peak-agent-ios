@@ -8,31 +8,12 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import RxDataSources
-
-struct SectionOfIndustries {
-    var header: String
-    var items: [Industry]
-}
-
-extension SectionOfIndustries: SectionModelType {
-    typealias Item = Industry
-    
-    init(original: SectionOfIndustries, items: [Industry]) {
-        self = original
-        self.items = items
-    }
-}
 
 final class CreateCompanyViewController: UIViewController {
     
     private let createCompanyView = CreateCompanyView()
     private var createCompanyViewModel: CreateCompanyViewModel
-    private let industrySelectedRelay = PublishRelay<Industry>()
     private let disposeBag = DisposeBag()
-    
-    private var dataSource: RxCollectionViewSectionedReloadDataSource<SectionOfIndustries>!
-    private var selectedIndexPaths = Set<IndexPath>()
     
     init(viewModel: CreateCompanyViewModel) {
         self.createCompanyViewModel = viewModel
@@ -51,76 +32,11 @@ final class CreateCompanyViewController: UIViewController {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
         tabBarController?.tabBar.isHidden = true
-        setupCollectionView()
         bind()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-    }
-    
-    private func setupCollectionView() {
-        let layout = UICollectionViewCompositionalLayout { sectionIndex, environment -> NSCollectionLayoutSection? in
-            let itemSize = NSCollectionLayoutSize(
-                widthDimension: .estimated(100),
-                heightDimension: .absolute(26)
-            )
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-            let groupSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(26)
-            )
-            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-            group.interItemSpacing = .fixed(10)
-
-            let section = NSCollectionLayoutSection(group: group)
-            section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-            section.interGroupSpacing = 10
-
-            let headerSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .absolute(40)
-            )
-            let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: headerSize,
-                elementKind: UICollectionView.elementKindSectionHeader,
-                alignment: .top
-            )
-            section.boundarySupplementaryItems = [sectionHeader]
-
-            return section
-        }
-        
-        createCompanyView.industryCollectionView.collectionViewLayout = layout
-        createCompanyView.industryCollectionView.delegate = self
-
-        dataSource = RxCollectionViewSectionedReloadDataSource<SectionOfIndustries>(
-            configureCell: { dataSource, collectionView, indexPath, industry in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: IndustryPickerCollectionViewCell.id,
-                    for: indexPath
-                ) as? IndustryPickerCollectionViewCell else { return UICollectionViewCell() }
-                let isSelected = self.selectedIndexPaths.contains(indexPath)
-                cell.setTitle(industry.name)
-                cell.setColor(isSelected)
-                cell.layer.cornerRadius = 10
-                cell.contentView.isUserInteractionEnabled = false
-                return cell
-            },
-            configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
-                guard let header = collectionView.dequeueReusableSupplementaryView(
-                    ofKind: kind,
-                    withReuseIdentifier: IndustryPickerHeaderView.id,
-                    for: indexPath
-                ) as? IndustryPickerHeaderView else {
-                    return UICollectionReusableView()
-                }
-                let section = dataSource.sectionModels[indexPath.section]
-                header.setTitle(section.header)
-                return header
-            }
-        )
     }
 }
 
@@ -129,33 +45,6 @@ final class CreateCompanyViewController: UIViewController {
 extension CreateCompanyViewController {
     
     private func bind() {
-        let sections = IndustryPickerData.categories.map { category in
-            SectionOfIndustries(header: category.name, items: category.industries)
-        }
-        Observable.just(sections)
-            .bind(to: createCompanyView.industryCollectionView.rx.items(dataSource: dataSource))
-            .disposed(by: disposeBag)
-        
-        createCompanyView.industryCollectionView.rx.itemSelected
-            .subscribe(onNext: { [weak self] indexPath in
-                guard let self = self else { return }
-                if self.selectedIndexPaths.contains(indexPath) {
-                    self.selectedIndexPaths.remove(indexPath)
-                } else {
-                    self.selectedIndexPaths.insert(indexPath)
-                }
-                
-                // ✅ reload 없이 셀 직접 업데이트, 애니메이션 적용
-                if let cell = self.createCompanyView.industryCollectionView.cellForItem(at: indexPath) as? IndustryPickerCollectionViewCell {
-                    let isSelected = self.selectedIndexPaths.contains(indexPath)
-                    UIView.animate(withDuration: 0.25) {
-                        cell.setColor(isSelected)
-                    }
-                }
-                
-            })
-            .disposed(by: disposeBag)
-        
         let name = createCompanyView.companyNameTextField.rx.text.orEmpty.skip(1).asObservable()
         let description = createCompanyView.companyDescriptionTextView.rx.text.orEmpty.skip(1).asObservable()
         
@@ -164,7 +53,7 @@ extension CreateCompanyViewController {
         let input = CreateCompanyViewModel.Input(
             companyNameTextFieldInput: name,
             companyDescriptionTextFieldInput: description,
-            industryButtonTapped: createCompanyView.industryCollectionView.rx.modelSelected(Industry.self).asObservable(), registerButtonTapped: registerbuttonTapped
+            registerButtonTapped: registerbuttonTapped
         )
         
         let output = createCompanyViewModel.transform(input: input)
@@ -186,19 +75,6 @@ extension CreateCompanyViewController {
                 guard let company = company else { return }
                 owner.createCompanyView.setupEditMode(company)
                 owner.navigation()
-                
-                // 표시할 선택된 industry 버튼 설정
-                let allSections = IndustryPickerData.categories.map { $0.industries }.flatMap { $0 }
-                owner.selectedIndexPaths = []
-
-                for (sectionIndex, section) in IndustryPickerData.categories.enumerated() {
-                    for (itemIndex, industry) in section.industries.enumerated() {
-                        if company.industry.contains(industry) {
-                            owner.selectedIndexPaths.insert(IndexPath(item: itemIndex, section: sectionIndex))
-                        }
-                    }
-                }
-                owner.createCompanyView.industryCollectionView.reloadData()
             })
             .disposed(by: disposeBag)
     }
@@ -220,35 +96,5 @@ extension CreateCompanyViewController {
         titleLabel.textColor = .label
         navigationItem.titleView = titleLabel
 
-    }
-}
-
-
-// MARK: - UICollectionViewDelegateFlowLayout
-
-extension CreateCompanyViewController: UICollectionViewDelegateFlowLayout {
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 40)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
-    }
-
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
     }
 }

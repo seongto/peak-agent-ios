@@ -74,14 +74,12 @@ extension NetworkManager {
     struct CompanyInfo: Codable {
         let uuid: String?
         let name: String
-        let industry: String
         let description: String
         // Add more fields as needed based on the API response
     }
 
     func registerCompany(
         name: String,
-        industry: String,
         description: String,
         mode: CreateCompanyMode,
         completion: @escaping (Result<String, AFError>) -> Void
@@ -97,7 +95,6 @@ extension NetworkManager {
         
         let parameters: Parameters = [
             "name": name,
-            "industry": industry,
             "description": description
         ]
 

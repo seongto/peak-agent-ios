@@ -20,12 +20,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let dummyHistoryVC = UIViewController()
         let tabBarController = UITabBarController()
         tabBarController.setViewControllers([mainVC, dummyHistoryVC], animated: false)
+        
+        tabBarController.tabBar.tintColor = .primary
 
         if let items = tabBarController.tabBar.items, items.count >= 2 {
             items[0].image = UIImage(systemName: "house.fill")
             items[0].title = "홈"
+            items[0].setTitleTextAttributes([
+                .font: UIFont(name: "Pretendard-Medium", size: 9),
+            ], for: .normal)
             items[1].image = UIImage(systemName: "clock.fill")
             items[1].title = "히스토리"
+            items[1].setTitleTextAttributes([
+                .font: UIFont(name: "Pretendard-Medium", size: 9),
+            ], for: .normal)
         }
 
         window.rootViewController = tabBarController

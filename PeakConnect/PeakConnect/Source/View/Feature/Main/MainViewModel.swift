@@ -67,8 +67,7 @@ extension MainViewModel {
         NetworkManager.shared.requestCompany() { result in
             switch result {
             case .success(let input):
-                let industries = input.industry.split(separator: ",").map { Industry(name: $0.trimmingCharacters(in: .whitespaces)) }
-                let company = Company(name: input.name, description: input.description, industry: industries)
+                let company = Company(name: input.name, description: input.description)
                 self.companyRelay.accept(company)
                 self.company = company
                 print("회사 조회 성공:", company)

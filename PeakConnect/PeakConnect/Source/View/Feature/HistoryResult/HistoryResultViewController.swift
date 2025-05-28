@@ -42,14 +42,12 @@ extension HistoryResultViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        print("test")
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: HistoryResultCollectionViewCell.id,
             for: indexPath
         ) as? HistoryResultCollectionViewCell else {
             return UICollectionViewCell()
         }
-        print("ddd")
         return cell
     }
 }

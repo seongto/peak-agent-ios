@@ -46,10 +46,6 @@ final class CreateCompanyView: UIView {
         $0.textColor = .white
     }
     
-    // 스크롤뷰
-    private let scrollView = UIScrollView()
-    private let contentView = UIView()
-    
     private let companyNameLabel = UILabel().then {
         $0.text = "회사명"
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
@@ -121,10 +117,6 @@ extension CreateCompanyView {
     private func setupUI() {
         backgroundColor = .background
         
-        [ scrollView ].forEach { addSubview($0) }
-        
-        [ contentView ].forEach { scrollView.addSubview($0) }
-        
         [
             logoImageView,
             descriptionLabel,
@@ -135,20 +127,11 @@ extension CreateCompanyView {
             companyDescriptionCountLabel,
             createButton
         ].forEach {
-            contentView.addSubview($0)
-        }
-        
-        scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.width.equalToSuperview()
+            addSubview($0)
         }
 
         logoImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(20)
+            make.top.equalTo(safeAreaLayoutGuide).inset(20)
             make.leading.equalToSuperview().inset(20)
             make.height.equalTo(25)
             make.width.equalTo(190)
@@ -208,7 +191,7 @@ extension CreateCompanyView {
         companyDescriptionTextView.text = company.description
         
         companyNameLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(20)
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).inset(20)
         }
     }
 }

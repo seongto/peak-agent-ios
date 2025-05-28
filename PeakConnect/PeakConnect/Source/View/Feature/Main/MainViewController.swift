@@ -53,7 +53,6 @@ extension MainViewController {
         output.isBeginner
             .skip(1)
             .drive(with: self, onNext: { owner, _ in
-                print("dd")
                 owner.connectCreateCompanyView(mode: .create)
             })
             .disposed(by: disposeBag)

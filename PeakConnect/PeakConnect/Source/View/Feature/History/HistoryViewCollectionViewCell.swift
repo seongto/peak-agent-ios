@@ -85,6 +85,7 @@ extension HistoryViewCollectionViewCell {
         dateLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.leading.equalToSuperview().inset(20)
+            make.height.equalTo(22)
         }
         
         pinImageView.snp.makeConstraints { make in

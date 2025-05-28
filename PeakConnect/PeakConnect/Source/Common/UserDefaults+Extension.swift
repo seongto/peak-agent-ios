@@ -25,7 +25,7 @@ extension UserDefaults {
     
     var uuid: String {
         get {
-            string(forKey: Keys.uuid)!
+            string(forKey: Keys.uuid) ?? ""
         }
         set {
             set(newValue, forKey: Keys.uuid)

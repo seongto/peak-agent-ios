@@ -94,16 +94,6 @@ final class CreateCompanyView: UIView {
         $0.textColor = .grayssss
         $0.textAlignment = .right
     }
-        
-    private let industryLabel = UILabel().then {
-        $0.text = "산업군 선택"
-        $0.font = UIFont(name: "Pretendard-Medium", size: 16)
-        $0.textColor = .white
-        $0.textAlignment = .left
-    }
-    
-    let industryCollectionView = IndustryPickerCollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-
     
     // 등록하기 버튼
     let createButton = UIButton(type: .system).then {
@@ -143,8 +133,6 @@ extension CreateCompanyView {
             companyDescriptionLabel,
             companyDescriptionTextView,
             companyDescriptionCountLabel,
-            industryLabel,
-            industryCollectionView,
             createButton
         ].forEach {
             contentView.addSubview($0)
@@ -163,7 +151,7 @@ extension CreateCompanyView {
             make.top.equalToSuperview().inset(20)
             make.leading.equalToSuperview().inset(20)
             make.height.equalTo(25)
-            make.width.equalTo(190) // 예시: 너비 고정값
+            make.width.equalTo(190)
         }
         
         descriptionLabel.snp.makeConstraints { make in
@@ -201,23 +189,10 @@ extension CreateCompanyView {
             make.height.equalTo(145)
         }
         
-        industryLabel.snp.makeConstraints { make in
-            make.top.equalTo(companyDescriptionTextView.snp.bottom).offset(32)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(20)
-        }
-        
-        industryCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(industryLabel.snp.bottom).offset(8)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(600)
-        }
-        
         createButton.snp.makeConstraints { make in
-            make.top.equalTo(industryCollectionView.snp.bottom).offset(32)
+            make.top.equalTo(companyDescriptionTextView.snp.bottom).offset(30)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(50)
-            make.bottom.equalToSuperview().inset(20)
         }
     }
 }

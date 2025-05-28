@@ -55,3 +55,11 @@ extension HistoryResultCollectionViewCell {
         }
     }
 }
+
+extension HistoryResultCollectionViewCell {
+    
+    func configure(data: HistoryListInfo.Lead) {
+        companyNameLabel.text = data.address
+        adressNameLabel.text = data.address
+    }
+}

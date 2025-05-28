@@ -36,13 +36,6 @@ extension HistoryViewController {
         let output = historyViewModel.transform(input: input)
         
         output.history
-            .do(onNext: { [weak self] historys in
-                guard let self = self else { return }
-                //guard let historys = historys else { return }
-                //let starIsEmpty = historys.isEmpty ? false : true
-                // 스타가 없으면 스타없음라벨 활성화
-                //self.starListView.noStarLabel.isHidden = starIsEmpty
-            })
             .drive(historyView.colletionView.rx.items(
                 cellIdentifier: HistoryViewCollectionViewCell.id,
                 cellType: HistoryViewCollectionViewCell.self)) { row, element, cell in

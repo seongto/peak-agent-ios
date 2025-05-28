@@ -17,9 +17,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
 
         let mainVC = UINavigationController(rootViewController: MainViewController())
-        let dummyHistoryVC = UIViewController()
+        let historyVC = HistoryViewController()
         let tabBarController = UITabBarController()
-        tabBarController.setViewControllers([mainVC, dummyHistoryVC], animated: false)
+        tabBarController.setViewControllers([mainVC, historyVC], animated: false)
         
         tabBarController.tabBar.tintColor = .primary
 

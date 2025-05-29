@@ -18,7 +18,7 @@ class MapView: UIView {
     // 현재 위치를 나타내는 마커
     private var currentLocationMarker: NMFMarker?
     // 리드(회사 등) 위치 마커 배열
-    private var leadMarkers: [NMFMarker] = []
+    var leadMarkers: [NMFMarker] = []
     
     // 리드 검색 결과를 보여주는 뷰 (초기에는 숨김)
     let leadResultsView = MapLeadResultsView().then {
@@ -199,13 +199,10 @@ class MapView: UIView {
     }
     
     
-    private func showLeadMarkers() {
-        
+    func showLeadMarkers(_ coordinates: [NMGLatLng]) {
         leadMarkers.forEach { $0.mapView = nil }
         leadMarkers.removeAll()
-        
-        let leadCoordinates = viewModel.leadCoordinates
-        for coord in leadCoordinates {
+        for coord in coordinates {
             let marker = NMFMarker(position: coord)
             marker.iconImage = NMFOverlayImage(image: UIImage(systemName: "flag.fill")!)
             marker.width = 40
@@ -214,6 +211,10 @@ class MapView: UIView {
             marker.mapView = mapContainerView.mapView
             leadMarkers.append(marker)
         }
+    }
+
+    func updateLeadResults(_ leads: [HistoryListInfo.Lead]) {
+        leadResultsView.updateLeads(leads)
     }
     
     // MARK: - 지도 이동 및 버튼 액션
@@ -225,37 +226,30 @@ class MapView: UIView {
     }
     
     func showLeadResultsView() {
-        
         leadModalView.isHidden = true
-        
         showCurrentLocationMarker()
-        showLeadMarkers()
-        
+
         if leadResultsView.superview == nil {
             mapContainerView.addSubview(leadResultsView)
         }
-        
+
         leadResultsView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
             make.height.equalTo(200)
         }
-        
+
         leadResultsView.onTrashButtonTapped = { [weak self] in
             self?.leadResultsView.isHidden = true
             self?.leadModalView.isHidden = false
-            
             self?.modalSearchButton.isHidden = false
             self?.modalLeadSearchButton.isHidden = false
             self?.backButton.isHidden = false
-            
             self?.leadMarkers.forEach { $0.mapView = nil }
             self?.leadMarkers.removeAll()
         }
-        
+
         leadResultsView.isHidden = false
-        leadResultsView.showLeadResults()
-        
     }
     
     func showOnlyCurrentLocationMarker() {

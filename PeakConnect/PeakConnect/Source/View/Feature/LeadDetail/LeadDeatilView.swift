@@ -9,97 +9,6 @@ import UIKit
 import SnapKit
 import Then
 
-class DetailsView: UIView {
-    
-    private let label = UILabel().then {
-        $0.text = "위치"
-        $0.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-    }
-    
-    private let text = UILabel().then {
-        $0.text = "테스트입니다."
-        $0.font = UIFont(name: "Pretendard-Regular", size: 14)
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupUI() {
-        
-        [
-            label,
-            text
-        ].forEach {
-            addSubview($0)
-        }
-        
-        label.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
-            make.centerY.equalToSuperview()
-            make.width.equalTo(80)
-        }
-        
-        text.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.leading.equalTo(label.snp.trailing)
-            make.trailing.equalToSuperview()
-        }
-    }
-}
-
-class LeadComponentsView: UIView {
-    
-    var topView = UIView()
-    
-    private let separatorView = UIView().then {
-        $0.backgroundColor = .textPrimary
-    }
-    
-    var bottomView = UIView()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    
-    private func setupUI() {
-        [
-            topView,
-            separatorView,
-            bottomView
-        ].forEach {
-            addSubview($0)
-        }
-        
-        topView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview().inset(20)
-        }
-        
-        separatorView.snp.makeConstraints { make in
-            make.top.equalTo(topView.snp.bottom).offset(10)
-            make.horizontalEdges.equalToSuperview().inset(20)
-            make.height.equalTo(1)
-        }
-        
-        bottomView.snp.makeConstraints { make in
-            make.bottom.leading.trailing.equalToSuperview().inset(20)
-            make.top.equalTo(separatorView.snp.bottom).offset(10)
-        }
-    }
-}
-
 class LeadDeatilView: UIView {
     
     private let companyInformationView = LeadComponentsView().then {
@@ -155,11 +64,11 @@ class LeadDeatilView: UIView {
         $0.spacing = 10
     }
     
-    private let locationView = DetailsView()
+    private let locationView = DetailView(.location)
     
-    private let siteView = DetailsView()
+    private let siteView = DetailView(.site)
     
-    private let yearView = DetailsView()
+    private let yearView = DetailView(.year)
     
     private let recommendLabel = UILabel().then {
         $0.text = "추천 내용"

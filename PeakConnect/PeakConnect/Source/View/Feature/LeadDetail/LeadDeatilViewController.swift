@@ -39,6 +39,16 @@ class LeadDeatilViewController: UIViewController {
 extension LeadDeatilViewController {
     
     private func bind() {
-        
+        let viewWillAppear = rx.methodInvoked(#selector(viewWillAppear)).map { _ in }
+        let input = LeadDeatilViewModel.Input(
+            viewWillAppear: viewWillAppear
+        )
+        let output = leadDeatilViewModel.transform(input: input)
+
+        output.leadInfo
+            .drive(with: self, onNext: { owner, result in
+                owner.leadDeatilView.configure(result)
+            })
+            .disposed(by: disposeBag)
     }
 }

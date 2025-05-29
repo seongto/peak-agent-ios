@@ -33,7 +33,6 @@ class LeadDeatilView: UIView {
     }
     
     private let companyInformationDetailLabel = UILabel().then {
-        $0.text = "사람과 AI 에이전트가 협력하여 선을 이루는 미래를 꿈꾸는 AI를 연구합니다.사람과 AI 에이전트가 협력하여 선을 이루는 미래를 꿈꾸는 AI를 연구합니다."
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
         $0.textAlignment = .justified
         $0.numberOfLines = 0
@@ -54,7 +53,6 @@ class LeadDeatilView: UIView {
     }
     
     private let nameLabel = UILabel().then {
-        $0.text = "권태욱"
         $0.font = UIFont(name: "Pretendard-Bold", size: 18)
     }
     
@@ -76,7 +74,6 @@ class LeadDeatilView: UIView {
     }
 
     private let recommendDetailLabel = UILabel().then {
-        $0.text = "더선한이 추구하는 바와 매우 잘 어울려요. 짝짝짝. 더선한이 추구하는 바와 매우 잘 어울려요. 짝짝짝."
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
         $0.textAlignment = .justified
         $0.numberOfLines = 0
@@ -197,5 +194,17 @@ extension LeadDeatilView {
         recommendDetailLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+}
+
+extension LeadDeatilView {
+    
+    func configure(_ result: LeadInfo) {
+        companyInformationDetailLabel.text = result.summary
+        nameLabel.text = result.ceo_name
+        locationView.configure(text: result.address)
+        siteView.configure(text: result.website)
+        yearView.configure(text: "\(result.year_founded)")
+        recommendDetailLabel.text = result.match_reason
     }
 }

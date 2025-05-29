@@ -31,7 +31,6 @@ class DetailView: UIView {
     }
     
     private let text = UILabel().then {
-        $0.text = "테스트입니다."
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
     }
     
@@ -84,7 +83,7 @@ class DetailView: UIView {
 
 extension DetailView {
     
-    private func configure(text: String) {
+    func configure(text: String) {
         self.text.text = text
     }
 }

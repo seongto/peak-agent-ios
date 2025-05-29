@@ -22,6 +22,18 @@ struct HistoryListInfo: Codable {
     }
 }
 
+struct LeadInfo: Codable {
+    let name: String
+    let summary: String
+    let address: String
+    let website: String
+    let match_reason: String
+    let year_founded: Int
+    let ceo_name: String
+    let industry: String
+}
+
+
 struct ApiResponse<T: Codable>: Codable {
     let success: Bool
     let data: T?
@@ -241,6 +253,38 @@ extension NetworkManager {
                 case .success(let apiResponse):
                     if apiResponse.success, let historyList = apiResponse.data {
                         completion(.success(historyList))
+                    } else {
+                        let errorMsg = apiResponse.message ?? "Unknown API error"
+                        print("API Error: \(errorMsg)")
+                        completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+
+    }
+    
+    func requestLead(id: Int, completion: @escaping (Result<LeadInfo, AFError>) -> Void) {
+        
+        companyUUID = UserDefaults.standard.uuid
+    
+        let endpoint = "lead/\(id)/info"
+        guard let url = URL(string: baseURL + endpoint) else {
+            print("Invalid URL")
+            return
+        }
+        
+        AF.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: commonHeaders)
+            .validate(statusCode: 200..<300)
+            .responseString(encoding: .utf8) { response in
+                print("Raw response: \(response.value ?? "nil")")
+            }
+            .responseDecodable(of: ApiResponse<LeadInfo>.self, decoder: JSONDecoder()) { response in
+                switch response.result {
+                case .success(let apiResponse):
+                    if apiResponse.success, let leadInfo = apiResponse.data {
+                        completion(.success(leadInfo))
                     } else {
                         let errorMsg = apiResponse.message ?? "Unknown API error"
                         print("API Error: \(errorMsg)")

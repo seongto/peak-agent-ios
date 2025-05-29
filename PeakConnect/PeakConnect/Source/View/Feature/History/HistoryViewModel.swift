@@ -20,18 +20,20 @@ struct History {
 class HistoryViewModel {
     
     private var historyRelay = BehaviorRelay<[History?]>(value: [])
+    private var idRealy = PublishRelay<Int>()
     private let disposeBag = DisposeBag()
-    
 }
 
 extension HistoryViewModel {
     
     struct Input {
         let viewWillAppear: Observable<Void>
+        let itemSelected: Observable<IndexPath>
     }
     
     struct Output {
         let history: Driver<[History?]>
+        let id: Driver<Int>
     }
     
     func transform(input: Input) -> Output {
@@ -41,8 +43,15 @@ extension HistoryViewModel {
             })
             .disposed(by: disposeBag)
         
+        input.itemSelected
+            .subscribe(with: self, onNext: { owner, indexPath in
+                owner.selectedItem(indexPath: indexPath)
+            })
+            .disposed(by: disposeBag)
+        
         return Output(
-            history: historyRelay.asDriver(onErrorDriveWith: .empty())
+            history: historyRelay.asDriver(onErrorDriveWith: .empty()),
+            id: idRealy.asDriver(onErrorDriveWith: .empty())
         )
     }
 }
@@ -67,11 +76,16 @@ extension HistoryViewModel {
                 }
 
                 self.historyRelay.accept(historys)
-                //self.company = company
                 print("회사 조회 성공:", historys)
             case .failure(let error):
                 print("회사 조회 실패:", error.localizedDescription)
             }
         }
+    }
+    
+    private func selectedItem(indexPath: IndexPath) {
+        let history = historyRelay.value
+        guard let item = history[indexPath.item] else { return }
+        idRealy.accept(item.id)
     }
 }

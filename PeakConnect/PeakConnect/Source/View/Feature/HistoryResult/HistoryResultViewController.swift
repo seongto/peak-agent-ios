@@ -32,15 +32,28 @@ class HistoryResultViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         bind()
-        historyResultView.collectionView.delegate = self
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = false
+        let titleLabel = UILabel()
+        titleLabel.text = "리드 추천 결과"
+        titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
+        titleLabel.textColor = .label
+        navigationItem.titleView = titleLabel
+        }
 }
 
 extension HistoryResultViewController {
     
     private func bind() {
         let viewWillAppear = rx.methodInvoked(#selector(viewWillAppear)).map { _ in }
-        let input = HistoryResultViewModel.Input(viewWillAppear: viewWillAppear)
+        let itemSelected =  historyResultView.collectionView.rx.itemSelected.asObservable()
+        let input = HistoryResultViewModel.Input(
+            viewWillAppear: viewWillAppear,
+            itemSelected: itemSelected
+        )
         let output = historyResultViewModel.transform(input: input)
 
         output.historyList
@@ -57,6 +70,14 @@ extension HistoryResultViewController {
                 }
                 .disposed(by: disposeBag)
         
+        output.id
+            .drive(with: self, onNext: { owner, id in
+                owner.connectView(id)
+            })
+            .disposed(by: disposeBag)
+        
+        historyResultView.collectionView.rx.setDelegate(self)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -70,5 +91,14 @@ extension HistoryResultViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         return CGSize(width: collectionView.frame.width, height: 87)
+    }
+}
+
+extension HistoryResultViewController {
+    
+    private func connectView(_ id: Int) {
+        let leadDeatilViewModel = LeadDeatilViewModel(id: id)
+        let leadDeatilViewController = LeadDeatilViewController(leadDeatilViewModel: leadDeatilViewModel)
+        navigationController?.pushViewController(leadDeatilViewController, animated: false)
     }
 }

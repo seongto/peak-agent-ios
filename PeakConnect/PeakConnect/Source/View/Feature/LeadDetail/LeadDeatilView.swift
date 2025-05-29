@@ -33,7 +33,6 @@ class LeadDeatilView: UIView {
     }
     
     private let companyInformationDetailLabel = UILabel().then {
-        $0.text = "사람과 AI 에이전트가 협력하여 선을 이루는 미래를 꿈꾸는 AI를 연구합니다.사람과 AI 에이전트가 협력하여 선을 이루는 미래를 꿈꾸는 AI를 연구합니다."
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
         $0.textAlignment = .justified
         $0.numberOfLines = 0
@@ -54,7 +53,6 @@ class LeadDeatilView: UIView {
     }
     
     private let nameLabel = UILabel().then {
-        $0.text = "권태욱"
         $0.font = UIFont(name: "Pretendard-Bold", size: 18)
     }
     
@@ -64,9 +62,9 @@ class LeadDeatilView: UIView {
         $0.spacing = 10
     }
     
-    private let locationView = DetailView(.location)
+    let locationView = DetailView(.location)
     
-    private let siteView = DetailView(.site)
+    let siteView = DetailView(.site)
     
     private let yearView = DetailView(.year)
     
@@ -76,11 +74,13 @@ class LeadDeatilView: UIView {
     }
 
     private let recommendDetailLabel = UILabel().then {
-        $0.text = "더선한이 추구하는 바와 매우 잘 어울려요. 짝짝짝. 더선한이 추구하는 바와 매우 잘 어울려요. 짝짝짝."
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
         $0.textAlignment = .justified
         $0.numberOfLines = 0
     }
+    
+    // 토스트 메세지 뷰
+    let toastView = ToastView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -98,7 +98,8 @@ extension LeadDeatilView {
         [
             companyInformationView,
             detailView,
-            recommendView
+            recommendView,
+            toastView
         ].forEach {
             addSubview($0)
         }
@@ -155,6 +156,11 @@ extension LeadDeatilView {
             make.bottom.equalTo(recommendDetailLabel.snp.bottom).offset(20)
         }
         
+        toastView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(10)
+        }
+        
         detailTopView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -197,5 +203,17 @@ extension LeadDeatilView {
         recommendDetailLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+}
+
+extension LeadDeatilView {
+    
+    func configure(_ result: LeadInfo) {
+        companyInformationDetailLabel.text = result.summary
+        nameLabel.text = result.ceo_name
+        locationView.configure(text: result.address)
+        siteView.configure(text: result.website)
+        yearView.configure(text: "\(result.year_founded)")
+        recommendDetailLabel.text = result.match_reason
     }
 }

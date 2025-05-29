@@ -31,11 +31,10 @@ class DetailView: UIView {
     }
     
     private let text = UILabel().then {
-        $0.text = "테스트입니다."
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
     }
     
-    private let copyButton = UIButton(type: .system).then {
+    let copyButton = UIButton(type: .system).then {
         $0.setImage(UIImage(systemName: "document.on.document.fill"), for: .normal)
         $0.tintColor = .white
     }
@@ -84,7 +83,7 @@ class DetailView: UIView {
 
 extension DetailView {
     
-    private func configure(text: String) {
+    func configure(text: String) {
         self.text.text = text
     }
 }

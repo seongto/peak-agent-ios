@@ -78,6 +78,9 @@ class LeadDeatilView: UIView {
         $0.textAlignment = .justified
         $0.numberOfLines = 0
     }
+    
+    // 토스트 메세지 뷰
+    let toastView = ToastView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -95,7 +98,8 @@ extension LeadDeatilView {
         [
             companyInformationView,
             detailView,
-            recommendView
+            recommendView,
+            toastView
         ].forEach {
             addSubview($0)
         }
@@ -150,6 +154,11 @@ extension LeadDeatilView {
             make.top.equalTo(detailView.snp.bottom).offset(20)
             make.horizontalEdges.equalToSuperview().inset(20)
             make.bottom.equalTo(recommendDetailLabel.snp.bottom).offset(20)
+        }
+        
+        toastView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(10)
         }
         
         detailTopView.snp.makeConstraints { make in

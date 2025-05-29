@@ -25,6 +25,11 @@ class HistoryViewController: UIViewController, UICollectionViewDelegate {
         bind()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = true
+    }
+    
 }
 
 extension HistoryViewController {

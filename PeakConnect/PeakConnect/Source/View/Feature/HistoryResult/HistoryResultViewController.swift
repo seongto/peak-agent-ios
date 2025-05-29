@@ -34,6 +34,16 @@ class HistoryResultViewController: UIViewController {
         bind()
         historyResultView.collectionView.delegate = self
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = false
+        let titleLabel = UILabel()
+        titleLabel.text = "리드 추천 결과"
+        titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
+        titleLabel.textColor = .label
+        navigationItem.titleView = titleLabel
+        }
 }
 
 extension HistoryResultViewController {

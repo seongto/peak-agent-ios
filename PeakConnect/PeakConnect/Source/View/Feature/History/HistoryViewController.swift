@@ -36,7 +36,11 @@ extension HistoryViewController {
     
     private func bind() {
         let viewWillAppear = rx.methodInvoked(#selector(viewWillAppear)).map { _ in }
-        let input = HistoryViewModel.Input(viewWillAppear: viewWillAppear)
+        let itemSelected =  historyView.colletionView.rx.itemSelected.asObservable()
+        let input = HistoryViewModel.Input(
+            viewWillAppear: viewWillAppear,
+            itemSelected: itemSelected
+        )
         let output = historyViewModel.transform(input: input)
         
         output.history
@@ -47,10 +51,9 @@ extension HistoryViewController {
                 }
                 .disposed(by: disposeBag)
         
-        historyView.colletionView.rx.itemSelected
-            .subscribe(with: self, onNext: { owner, index in
-                print(index)
-                owner.connectView()
+        output.id
+            .drive(with: self, onNext: { owner, id in
+                owner.connectView(id)
             })
             .disposed(by: disposeBag)
         
@@ -74,8 +77,8 @@ extension HistoryViewController: UICollectionViewDelegateFlowLayout {
 
 extension HistoryViewController {
     
-    private func connectView() {
-        let historyResultViewModel = HistoryResultViewModel(id: 1)
+    private func connectView(_ id: Int) {
+        let historyResultViewModel = HistoryResultViewModel(id: id)
         let historyResultViewController = HistoryResultViewController(viewModel: historyResultViewModel)
         navigationController?.pushViewController(historyResultViewController, animated: false)
     }

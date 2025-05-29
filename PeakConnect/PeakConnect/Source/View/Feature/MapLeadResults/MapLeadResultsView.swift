@@ -28,6 +28,8 @@ class MapLeadResultsView: UIView {
         $0.setImage(UIImage(systemName: "trash"), for: .normal)
         $0.backgroundColor = .background
         $0.layer.cornerRadius = 14
+        $0.imageView?.contentMode = .scaleAspectFit
+        $0.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
     }
     
     // 추천 결과를 보여줄 컬렉션 뷰

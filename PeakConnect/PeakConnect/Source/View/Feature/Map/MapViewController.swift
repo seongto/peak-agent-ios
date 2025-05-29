@@ -48,9 +48,11 @@ class MapViewController: UIViewController {
     
     // 현재 위치에서 리드 찾기 버튼 탭 시 호출 되는 메소드
     @objc private func didTapLeadResultsButton() {
+        
         mapView.showLeadResultsView()
         mapView.modalSearchButton.isHidden = true
         mapView.modalLeadSearchButton.isHidden = true
         mapView.backButton.isHidden = true
+        
     }
 }

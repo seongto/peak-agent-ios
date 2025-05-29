@@ -12,7 +12,7 @@ import Then
 
 
 class MapView: UIView {
-
+    
     // 지도와 위치 관련 데이터를 관리하는 뷰모델
     private let viewModel = MapViewModel()
     // 현재 위치를 나타내는 마커
@@ -86,7 +86,7 @@ class MapView: UIView {
     
     // 현재 위치로 이동 버튼
     let currentLocationButton = UIButton(type: .system).then {
-
+        
         $0.backgroundColor = UIColor.background
         $0.tintColor = .white
         $0.layer.cornerRadius = 10
@@ -98,7 +98,7 @@ class MapView: UIView {
     }
     
     // MARK: - 초기화
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -114,7 +114,7 @@ class MapView: UIView {
     }
     
     // MARK: - 뷰 계층 설정
-
+    
     private func setupViews() {
         backgroundColor = .white
         // 지도 뷰 추가
@@ -132,7 +132,7 @@ class MapView: UIView {
     }
     
     // MARK: - SnapKit 레이아웃 설정
-
+    
     private func setupLayout() {
         // 지도 뷰는 전체 화면 설정
         mapContainerView.snp.makeConstraints { make in
@@ -182,15 +182,15 @@ class MapView: UIView {
     }
     
     // MARK: - 지도 마커 관련 기능
-
+    
     private func showCurrentLocationMarker() {
-
+        
         if currentLocationMarker == nil {
             currentLocationMarker = NMFMarker()
             currentLocationMarker?.iconImage = NMFOverlayImage(image: UIImage(systemName: "location.fill")!)
             currentLocationMarker?.width = 32
             currentLocationMarker?.height = 32
-
+            
         }
         
         // 현재 위치로 마커 위치 지정 및 지도에 표시
@@ -198,12 +198,12 @@ class MapView: UIView {
         currentLocationMarker?.mapView = mapContainerView.mapView
     }
     
-
+    
     private func showLeadMarkers() {
-
+        
         leadMarkers.forEach { $0.mapView = nil }
         leadMarkers.removeAll()
-
+        
         let leadCoordinates = viewModel.leadCoordinates
         for coord in leadCoordinates {
             let marker = NMFMarker(position: coord)
@@ -223,7 +223,7 @@ class MapView: UIView {
         cameraUpdate.animation = .easeIn
         mapContainerView.mapView.moveCamera(cameraUpdate)
     }
-
+    
     func showLeadResultsView() {
         
         leadModalView.isHidden = true
@@ -234,17 +234,30 @@ class MapView: UIView {
         if leadResultsView.superview == nil {
             mapContainerView.addSubview(leadResultsView)
         }
-
+        
         leadResultsView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
             make.height.equalTo(200)
         }
-
+        
+        leadResultsView.onTrashButtonTapped = { [weak self] in
+            self?.leadResultsView.isHidden = true
+            self?.leadModalView.isHidden = false
+            
+            self?.modalSearchButton.isHidden = false
+            self?.modalLeadSearchButton.isHidden = false
+            self?.backButton.isHidden = false
+            
+            self?.leadMarkers.forEach { $0.mapView = nil }
+            self?.leadMarkers.removeAll()
+        }
+        
         leadResultsView.isHidden = false
         leadResultsView.showLeadResults()
+        
     }
-
+    
     func showOnlyCurrentLocationMarker() {
         leadMarkers.forEach { $0.mapView = nil }
         leadMarkers.removeAll()

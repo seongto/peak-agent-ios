@@ -33,7 +33,6 @@ class MainView: UIView {
     }
     
     let companyNameLabel = UILabel().then {
-        $0.text = "더선한 스튜디오 님"
         $0.font = UIFont(name: "Pretendard-Bold", size: 20)
         $0.textColor = .white
     }

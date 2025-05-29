@@ -17,12 +17,10 @@ class HistoryResultView: UIView {
     }
     
     private let countLabel = UILabel().then {
-        $0.text = "총 10개의 리드 추천을 받았어요!"
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
     }
     
     private let addressLabel = UILabel().then {
-        $0.text = "서울시 강남구 역삼동 148"
         $0.font = UIFont(name: "Pretendard-Bold", size: 16)
     }
     
@@ -80,5 +78,13 @@ extension HistoryResultView {
             make.bottom.equalToSuperview().inset(20)
             make.centerX.equalToSuperview()
         }
+    }
+}
+
+extension HistoryResultView {
+    
+    func configure(_ result: HistoryListInfo) {
+        addressLabel.text = result.address
+        countLabel.text = "총 \(result.leads.count)개의 리드 추천을 받았어요!"
     }
 }

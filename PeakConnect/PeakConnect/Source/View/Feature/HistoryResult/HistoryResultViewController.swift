@@ -12,9 +12,18 @@ import RxCocoa
 class HistoryResultViewController: UIViewController {
     
     private let historyResultView = HistoryResultView()
-    private let historyResultViewModel = HistoryResultViewModel()
+    private let historyResultViewModel: HistoryResultViewModel
     
     private let disposeBag = DisposeBag()
+    
+    init(viewModel: HistoryResultViewModel) {
+        historyResultViewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         view = historyResultView
@@ -24,31 +33,30 @@ class HistoryResultViewController: UIViewController {
         super.viewDidLoad()
         bind()
         historyResultView.collectionView.delegate = self
-        historyResultView.collectionView.dataSource = self
     }
 }
 
 extension HistoryResultViewController {
     
     private func bind() {
-        
-    }
-}
+        let viewWillAppear = rx.methodInvoked(#selector(viewWillAppear)).map { _ in }
+        let input = HistoryResultViewModel.Input(viewWillAppear: viewWillAppear)
+        let output = historyResultViewModel.transform(input: input)
 
-extension HistoryResultViewController: UICollectionViewDataSource {
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        5
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: HistoryResultCollectionViewCell.id,
-            for: indexPath
-        ) as? HistoryResultCollectionViewCell else {
-            return UICollectionViewCell()
-        }
-        return cell
+        output.historyList
+            .drive(with: self, onNext: { owner, result in
+                owner.historyResultView.configure(result)
+            })
+            .disposed(by: disposeBag)
+        
+        output.leads
+            .drive(historyResultView.collectionView.rx.items(
+                cellIdentifier: HistoryResultCollectionViewCell.id,
+                cellType: HistoryResultCollectionViewCell.self)) { row, element, cell in
+                    cell.configure(data: element)
+                }
+                .disposed(by: disposeBag)
+        
     }
 }
 

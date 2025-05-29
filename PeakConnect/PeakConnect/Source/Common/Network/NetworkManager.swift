@@ -8,6 +8,20 @@
 import Foundation
 import Alamofire
 
+struct HistoryListInfo: Codable {
+    let address: String
+    let leads: [Lead]
+    
+    struct Lead: Codable {
+        let id: Int
+        let name: String
+        let address: String
+        let industry: String
+        let latitude: Double
+        let longitude: Double
+    }
+}
+
 struct ApiResponse<T: Codable>: Codable {
     let success: Bool
     let data: T?
@@ -84,6 +98,8 @@ extension NetworkManager {
         let leads: String
         let count: Int
     }
+    
+
 
     func registerCompany(
         name: String,
@@ -193,6 +209,38 @@ extension NetworkManager {
                 case .success(let apiResponse):
                     if apiResponse.success, let history = apiResponse.data {
                         completion(.success(history))
+                    } else {
+                        let errorMsg = apiResponse.message ?? "Unknown API error"
+                        print("API Error: \(errorMsg)")
+                        completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+
+    }
+    
+    func requestHistLists(id: Int, completion: @escaping (Result<HistoryListInfo, AFError>) -> Void) {
+        
+        companyUUID = UserDefaults.standard.uuid
+    
+        let endpoint = "lead/recommendation/\(id)/list"
+        guard let url = URL(string: baseURL + endpoint) else {
+            print("Invalid URL")
+            return
+        }
+        
+        AF.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: commonHeaders)
+            .validate(statusCode: 200..<300)
+            .responseString(encoding: .utf8) { response in
+                print("Raw response: \(response.value ?? "nil")")
+            }
+            .responseDecodable(of: ApiResponse<HistoryListInfo>.self, decoder: JSONDecoder()) { response in
+                switch response.result {
+                case .success(let apiResponse):
+                    if apiResponse.success, let historyList = apiResponse.data {
+                        completion(.success(historyList))
                     } else {
                         let errorMsg = apiResponse.message ?? "Unknown API error"
                         print("API Error: \(errorMsg)")

@@ -76,7 +76,6 @@ extension HistoryResultViewModel {
     }
     
     private func selectedItem(indexPath: IndexPath) {
-        print("d")
         guard let leads = leads else { return }
         let item = leads[indexPath.item]
         idRelay.accept(item.id)

@@ -84,29 +84,60 @@ class CompanyInfoCell: UICollectionViewCell {
         $0.spacing = 5
         $0.distribution = .fill
     }
-    // Site
-    private let siteContainer = UIView().then {
-        $0.backgroundColor = UIColor(named: "primary-dark")
-        $0.layer.cornerRadius = 12
-        $0.clipsToBounds = true
-    }
-    private let siteTitleLabel = UILabel().then {
-        $0.font = .boldSystemFont(ofSize: 12)
-        $0.textColor = UIColor.white.withAlphaComponent(0.8)
-        $0.textAlignment = .center
-        $0.text = "사이트"
-    }
-    private let siteIconImageView = UIImageView().then {
+    // Site as UIButton
+    private let siteButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = UIColor(named: "primary-dark")
+        button.layer.cornerRadius = 12
+        button.clipsToBounds = true
+        
+        let titleLabel = UILabel()
+        titleLabel.font = .boldSystemFont(ofSize: 12)
+        titleLabel.textColor = UIColor.white.withAlphaComponent(0.8)
+        titleLabel.textAlignment = .center
+        titleLabel.text = "사이트"
+        titleLabel.isUserInteractionEnabled = false
+        
+        let iconView = UIImageView()
         let houseImage = UIImage(systemName: "house.fill")?.withRenderingMode(.alwaysTemplate)
-        $0.image = houseImage
-        $0.tintColor = UIColor.white
-        $0.contentMode = .scaleAspectFit
-    }
-    private lazy var siteStack = UIStackView(arrangedSubviews: [siteTitleLabel, siteIconImageView]).then {
-        $0.axis = .vertical
-        $0.alignment = .center
-        $0.spacing = 5
-        $0.distribution = .fill
+        iconView.image = houseImage
+        iconView.tintColor = UIColor.white
+        iconView.contentMode = .scaleAspectFit
+        iconView.snp.makeConstraints { make in
+            make.width.height.equalTo(20)
+        }
+        iconView.isUserInteractionEnabled = false
+        
+        let stack = UIStackView(arrangedSubviews: [titleLabel, iconView])
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = 5
+        stack.distribution = .fill
+        stack.isUserInteractionEnabled = false
+        
+        button.addSubview(stack)
+        stack.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(8)
+        }
+        
+        // Add action to check click functionality
+        button.addTarget(nil, action: #selector(debugSiteButtonTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    @objc private func debugSiteButtonTapped() {
+        UIPasteboard.general.string = "https://example.com"
+        let alert = UIAlertController(title: nil, message: "클립보드가 복사되었습니다.", preferredStyle: .alert)
+        DispatchQueue.main.async {
+            if let topVC = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                topVC.present(alert, animated: true) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        alert.dismiss(animated: true, completion: nil)
+                    }
+                }
+            }
+        }
     }
     
     private let bottomStackView = UIStackView().then {
@@ -117,7 +148,7 @@ class CompanyInfoCell: UICollectionViewCell {
         $0.isLayoutMarginsRelativeArrangement = true
         $0.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     }
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -140,25 +171,24 @@ class CompanyInfoCell: UICollectionViewCell {
         container.addSubview(companyNameLabel)
         container.addSubview(addressLabel)
         container.addSubview(bottomStackView)
-
+        
         ceoContainer.addSubview(ceoStack)
         establishedContainer.addSubview(establishedStack)
-        siteContainer.addSubview(siteStack)
-
+        
         bottomStackView.addArrangedSubview(ceoContainer)
         bottomStackView.addArrangedSubview(establishedContainer)
-        bottomStackView.addArrangedSubview(siteContainer)
+        bottomStackView.addArrangedSubview(siteButton)
         
         companyNameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.leading.trailing.equalToSuperview().inset(20)
         }
-
+        
         addressLabel.snp.makeConstraints { make in
             make.top.equalTo(companyNameLabel.snp.bottom).offset(8)
             make.leading.trailing.equalTo(companyNameLabel)
         }
-
+        
         ceoStack.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(8)
         }
@@ -173,17 +203,11 @@ class CompanyInfoCell: UICollectionViewCell {
             make.height.equalTo(55)
             make.width.equalTo(75)
         }
-        siteStack.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(8)
-        }
-        siteIconImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(20)
-        }
-        siteContainer.snp.makeConstraints { make in
+        siteButton.snp.makeConstraints { make in
             make.height.equalTo(55)
             make.width.equalTo(75)
         }
-
+        
         bottomStackView.snp.makeConstraints { make in
             make.top.equalTo(addressLabel.snp.bottom).offset(4)
             make.leading.trailing.equalToSuperview().inset(20)
@@ -196,20 +220,19 @@ class CompanyInfoCell: UICollectionViewCell {
         ceoValueLabel.text = ceo
         establishedValueLabel.text = established
     }
-}
-
-
-class PaddingLabel: UILabel {
-    var padding = UIEdgeInsets.zero
-
-    override func drawText(in rect: CGRect) {
-        let insetRect = rect.inset(by: padding)
-        super.drawText(in: insetRect)
-    }
-
-    override var intrinsicContentSize: CGSize {
-        let size = super.intrinsicContentSize
-        return CGSize(width: size.width + padding.left + padding.right,
-                      height: size.height + padding.top + padding.bottom)
+    
+    class PaddingLabel: UILabel {
+        var padding = UIEdgeInsets.zero
+        
+        override func drawText(in rect: CGRect) {
+            let insetRect = rect.inset(by: padding)
+            super.drawText(in: insetRect)
+        }
+        
+        override var intrinsicContentSize: CGSize {
+            let size = super.intrinsicContentSize
+            return CGSize(width: size.width + padding.left + padding.right,
+                          height: size.height + padding.top + padding.bottom)
+        }
     }
 }

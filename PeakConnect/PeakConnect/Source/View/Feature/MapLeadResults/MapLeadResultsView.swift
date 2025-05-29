@@ -24,6 +24,14 @@ class MapLeadResultsView: UIView {
         $0.titleLabel?.font = .boldSystemFont(ofSize: 14)
     }
     
+    let trashButton = UIButton(type: .system).then {
+        $0.setImage(UIImage(systemName: "trash"), for: .normal)
+        $0.backgroundColor = .background
+        $0.layer.cornerRadius = 14
+        $0.imageView?.contentMode = .scaleAspectFit
+        $0.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
+    }
+    
     // 추천 결과를 보여줄 컬렉션 뷰
     let resultCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -66,18 +74,34 @@ class MapLeadResultsView: UIView {
             make.height.equalTo(30)
             make.width.equalTo(160)
         }
+        
+        addSubview(trashButton)
+        trashButton.snp.makeConstraints { make in
+            make.leading.equalTo(showAllResultsButton.snp.trailing).offset(30)
+            make.centerY.equalTo(showAllResultsButton)
+            make.height.equalTo(30)
+            make.width.equalTo(30)
+        }
 
         resultCollectionView.dataSource = self
         resultCollectionView.delegate = self
 
         resultCollectionView.isUserInteractionEnabled = true
         showAllResultsButton.isUserInteractionEnabled = true
+        
+        trashButton.addTarget(self, action: #selector(trashButtonTapped), for: .touchUpInside)
     }
     
     // 데이터를 로드하여 추천 결과를 보여주는 메소드 (더미 데이터)
     func showLeadResults() {
         viewModel.loadDummyData()
         resultCollectionView.reloadData()
+    }
+    
+    var onTrashButtonTapped: (() -> Void)?
+    
+    @objc private func trashButtonTapped() {
+        onTrashButtonTapped?()
     }
 }
 

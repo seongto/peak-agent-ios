@@ -5,13 +5,20 @@
 //  Created by 서문가은 on 5/29/25.
 //
 
-import Foundation
+import UIKit
 import RxSwift
 import RxCocoa
 
 enum CopyType {
     case location
     case site
+    
+    var text: String {
+        switch self {
+        case .location: "위치 주소가 복사되었습니다."
+        case .site: "사이트 주소가 복사되었습니다."
+        }
+    }
 }
 
 class LeadDeatilViewModel {
@@ -81,9 +88,15 @@ extension LeadDeatilViewModel {
     }
     
     private func copyText(_ type: CopyType) {
+        guard let lead = lead else { return }
+        var copyValue = ""
         switch type {
-        case .location: print(lead?.address)
-        case .site: print(lead?.website)
+        case .location:
+            copyValue = lead.address
+        case .site: copyValue = lead.website
         }
+        
+        UIPasteboard.general.string = copyValue
+        copyTextRelay.accept(type.text)
     }
 }

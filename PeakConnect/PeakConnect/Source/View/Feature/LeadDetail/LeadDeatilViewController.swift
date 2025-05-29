@@ -28,12 +28,12 @@ class LeadDeatilViewController: UIViewController {
     override func loadView() {
         view = leadDeatilView
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         bind()
     }
-
+    
 }
 
 extension LeadDeatilViewController {
@@ -48,7 +48,7 @@ extension LeadDeatilViewController {
             siteCopybuttonTapped: siteCopyButtonTapped
         )
         let output = leadDeatilViewModel.transform(input: input)
-
+        
         output.leadInfo
             .drive(with: self, onNext: { owner, result in
                 owner.leadDeatilView.configure(result)
@@ -58,6 +58,12 @@ extension LeadDeatilViewController {
         output.title
             .drive(with: self, onNext: { owner, result in
                 owner.setupNavigation(result)
+            })
+            .disposed(by: disposeBag)
+        
+        output.copyText
+            .drive(with: self, onNext: { owner, result in
+                owner.popupToastView(result)
             })
             .disposed(by: disposeBag)
     }
@@ -71,5 +77,9 @@ extension LeadDeatilViewController {
         titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
         titleLabel.textColor = .label
         navigationItem.titleView = titleLabel
+    }
+    
+    private func popupToastView(_ text: String) {
+        leadDeatilView.toastView.showToastMessage(text)
     }
 }

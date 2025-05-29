@@ -34,7 +34,7 @@ class DetailView: UIView {
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
     }
     
-    private let copyButton = UIButton(type: .system).then {
+    let copyButton = UIButton(type: .system).then {
         $0.setImage(UIImage(systemName: "document.on.document.fill"), for: .normal)
         $0.tintColor = .white
     }

@@ -40,8 +40,12 @@ extension LeadDeatilViewController {
     
     private func bind() {
         let viewWillAppear = rx.methodInvoked(#selector(viewWillAppear)).map { _ in }
+        let locationCopyButtonTapped = leadDeatilView.locationView.copyButton.rx.tap.asObservable()
+        let siteCopyButtonTapped = leadDeatilView.siteView.copyButton.rx.tap.asObservable()
         let input = LeadDeatilViewModel.Input(
-            viewWillAppear: viewWillAppear
+            viewWillAppear: viewWillAppear,
+            locationCopybuttonTapped: locationCopyButtonTapped,
+            siteCopybuttonTapped: siteCopyButtonTapped
         )
         let output = leadDeatilViewModel.transform(input: input)
 
@@ -50,5 +54,22 @@ extension LeadDeatilViewController {
                 owner.leadDeatilView.configure(result)
             })
             .disposed(by: disposeBag)
+        
+        output.title
+            .drive(with: self, onNext: { owner, result in
+                owner.setupNavigation(result)
+            })
+            .disposed(by: disposeBag)
+    }
+}
+
+extension LeadDeatilViewController {
+    
+    private func setupNavigation(_ title: String) {
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
+        titleLabel.textColor = .label
+        navigationItem.titleView = titleLabel
     }
 }

@@ -62,9 +62,9 @@ class LeadDeatilView: UIView {
         $0.spacing = 10
     }
     
-    private let locationView = DetailView(.location)
+    let locationView = DetailView(.location)
     
-    private let siteView = DetailView(.site)
+    let siteView = DetailView(.site)
     
     private let yearView = DetailView(.year)
     

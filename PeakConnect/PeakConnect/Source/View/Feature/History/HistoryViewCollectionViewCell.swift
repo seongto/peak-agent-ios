@@ -138,7 +138,10 @@ extension HistoryViewCollectionViewCell {
         listTextLabel.text = history.leads
         countTextLabel.text = "총 \(history.count)개 업체"
         
-        if let date = ISO8601DateFormatter().date(from: history.createdAt) {
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        
+        if let date = isoFormatter.date(from: history.createdAt) {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy.MM.dd"
             let formattedDate = formatter.string(from: date)

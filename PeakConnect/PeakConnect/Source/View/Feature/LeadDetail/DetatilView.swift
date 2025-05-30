@@ -77,6 +77,7 @@ class DetailView: UIView {
             make.centerY.equalToSuperview()
             make.leading.equalTo(text.snp.trailing).offset(5)
             make.size.equalTo(12)
+            make.trailing.lessThanOrEqualToSuperview()
         }
     }
 }

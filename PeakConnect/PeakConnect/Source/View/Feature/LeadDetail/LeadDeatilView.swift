@@ -34,7 +34,6 @@ class LeadDeatilView: UIView {
     
     private let companyInformationDetailLabel = UILabel().then {
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
-        $0.textAlignment = .justified
         $0.numberOfLines = 0
     }
     
@@ -75,7 +74,6 @@ class LeadDeatilView: UIView {
 
     private let recommendDetailLabel = UILabel().then {
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
-        $0.textAlignment = .justified
         $0.numberOfLines = 0
     }
     
@@ -214,6 +212,26 @@ extension LeadDeatilView {
         locationView.configure(text: result.address)
         siteView.configure(text: result.website)
         yearView.configure(text: "\(result.year_founded)")
-        recommendDetailLabel.text = result.match_reason
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 6
+
+        let recommendDetailAttributedString = NSAttributedString(
+            string: result.summary,
+            attributes: [
+                .font: UIFont(name: "Pretendard-Regular", size: 14) as Any,
+                .paragraphStyle: paragraphStyle
+            ]
+        )
+        
+        let companyAttributedString = NSAttributedString(
+            string: result.match_reason,
+            attributes: [
+                .font: UIFont(name: "Pretendard-Regular", size: 14) as Any,
+                .paragraphStyle: paragraphStyle
+            ]
+        )
+        
+        recommendDetailLabel.attributedText = recommendDetailAttributedString
+        companyInformationDetailLabel.attributedText = companyAttributedString
     }
 }

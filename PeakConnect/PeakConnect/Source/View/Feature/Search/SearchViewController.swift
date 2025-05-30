@@ -24,6 +24,16 @@ final class SearchViewController: UIViewController {
         super.viewDidLoad()
         bind()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = false
+        let titleLabel = UILabel()
+        titleLabel.text = "위치 검색"
+        titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
+        titleLabel.textColor = .label
+        navigationItem.titleView = titleLabel
+    }
 
 }
 

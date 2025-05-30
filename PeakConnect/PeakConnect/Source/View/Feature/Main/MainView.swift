@@ -133,7 +133,7 @@ class MainView: UIView {
 
 extension MainView {
     
-    func setupData(company: Company) {
-        companyNameLabel.text = "\(company.name) 님"
+    func setupData(_ companyName: String) {
+        companyNameLabel.text = "\(companyName) 님"
     }
 }

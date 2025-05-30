@@ -13,7 +13,7 @@ class MainViewModel: UIViewController {
     private let isBeginnerRelay = BehaviorRelay<Void>(value: ())
     let fetchRelay = PublishRelay<Void>()
     private let editRelay = PublishRelay<Company>()
-    private let companyRelay = PublishRelay<Company>()
+    private let companyNameRelay = PublishRelay<String>()
     private let disposeBag = DisposeBag()
     
     private var company: Company?
@@ -29,7 +29,7 @@ extension MainViewModel {
     
     struct Output {
         let isBeginner: Driver<Void>
-        let company: Driver<Company>
+        let companyName: Driver<String>
         let edit: Driver<Company>
     }
     
@@ -38,7 +38,7 @@ extension MainViewModel {
         input.viewWillAppear
             .subscribe(with: self, onNext: { owner, _ in
                 if UserDefaults.standard.isBegginer {
-                    owner.fetchData()
+                    owner.companyNameRelay.accept(UserDefaults.standard.companyName)
                 } else {
                     owner.isBeginnerRelay.accept(())
                 }
@@ -47,15 +47,14 @@ extension MainViewModel {
         
         input.editCompanyButtonTapped
             .subscribe(with: self, onNext: { owner, _ in
-                guard let company = owner.company else { return }
-                owner.editRelay.accept(company)
+                owner.fetchData()
             })
             .disposed(by: disposeBag)
         
         
         return Output(
             isBeginner: isBeginnerRelay.asDriver(onErrorDriveWith: .empty()),
-            company: companyRelay.asDriver(onErrorDriveWith: .empty()),
+            companyName: companyNameRelay.asDriver(onErrorDriveWith: .empty()),
             edit: editRelay.asDriver(onErrorDriveWith: .empty())
         )
     }
@@ -67,9 +66,9 @@ extension MainViewModel {
         NetworkManager.shared.requestCompany() { result in
             switch result {
             case .success(let input):
+                print(input)
                 let company = Company(name: input.name, description: input.description)
-                self.companyRelay.accept(company)
-                self.company = company
+                self.editRelay.accept(company)
                 print("회사 조회 성공:", company)
             case .failure(let error):
                 print("회사 조회 실패:", error.localizedDescription)

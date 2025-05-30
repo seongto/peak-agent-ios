@@ -101,6 +101,7 @@ extension CreateCompanyViewModel {
             switch result {
             case .success(let uuid):
                 UserDefaults.standard.isBegginer = true
+                UserDefaults.standard.companyName = self.companyName
                 self.completeRelay.accept(mode)
                 guard let uuid = uuid else {
                     return

@@ -24,17 +24,40 @@ final class SearchViewController: UIViewController {
         super.viewDidLoad()
         bind()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = false
+        let titleLabel = UILabel()
+        titleLabel.text = "위치 검색"
+        titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
+        titleLabel.textColor = .label
+        navigationItem.titleView = titleLabel
+    }
 
 }
 
 extension SearchViewController {
     
     private func bind() {
+        let searchText = searchView.searchBar.textField.rx.text.asObservable()
         let itemSelected =  searchView.collectionView.rx.itemSelected.asObservable()
         let input = SearchViewModel.Input(
+            searchText: searchText,
             itemSelected: itemSelected
         )
         let output = searchViewModel.transform(input: input)
+        
+        output.search
+            .drive(searchView.collectionView.rx.items(
+                cellIdentifier: SearchCollectionViewCell.id,
+                cellType: SearchCollectionViewCell.self)) { row, element, cell in
+                    cell.configure(data: element)
+                }
+                .disposed(by: disposeBag)
+        
+        searchView.collectionView.rx.setDelegate(self)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -50,7 +73,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: collectionView.frame.width, height: 87)
     }
 }
-
+ 
 extension HistoryResultViewController {
     
     private func connectView(_ id: Int) {

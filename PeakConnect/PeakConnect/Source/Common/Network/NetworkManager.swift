@@ -9,17 +9,8 @@ import Foundation
 import Alamofire
 
 struct HistoryListInfo: Codable {
-    let address: String
+    let location: String
     let leads: [Lead]
-    
-    struct Lead: Codable {
-        let id: Int
-        let name: String
-        let address: String
-        let industry: String
-        let latitude: Double
-        let longitude: Double
-    }
 }
 
 struct LeadInfo: Codable {
@@ -28,7 +19,7 @@ struct LeadInfo: Codable {
     let address: String
     let website: String
     let match_reason: String
-    let year_founded: Int
+    let year_founded: String
     let ceo_name: String
     let industry: String
 }
@@ -208,7 +199,7 @@ extension NetworkManager {
                     completion(.failure(error))
                 }
             }
-    } 
+    }
     
     func requestHistList(completion: @escaping (Result<[HistoryInfo], AFError>) -> Void) {
         
@@ -236,6 +227,7 @@ extension NetworkManager {
                         completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
                     }
                 case .failure(let error):
+                    print(error)
                     completion(.failure(error))
                 }
             }
@@ -258,6 +250,7 @@ extension NetworkManager {
                 print("Raw response: \(response.value ?? "nil")")
             }
             .responseDecodable(of: ApiResponse<HistoryListInfo>.self, decoder: JSONDecoder()) { response in
+                print(response.result)
                 switch response.result {
                 case .success(let apiResponse):
                     if apiResponse.success, let historyList = apiResponse.data {
@@ -268,6 +261,7 @@ extension NetworkManager {
                         completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
                     }
                 case .failure(let error):
+                    //print(error)
                     completion(.failure(error))
                 }
             }
@@ -300,6 +294,7 @@ extension NetworkManager {
                         completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
                     }
                 case .failure(let error):
+                    print(error)
                     completion(.failure(error))
                 }
             }
@@ -341,3 +336,65 @@ extension NetworkManager {
     }
 }
  
+extension NetworkManager {
+    
+    func requestSearch(value: String, completion: @escaping (Result<NaverLocalSearchResponse, AFError>) -> Void) {
+        let mapURL = "https://openapi.naver.com/v1/search/local.json"
+        var urlComponents = URLComponents(string: mapURL)!
+          urlComponents.queryItems = [
+            URLQueryItem(name: "query", value: value),
+            URLQueryItem(name: "display", value: "5")
+          ]
+        
+        guard let url = urlComponents.url else {
+            print("Invalid URL")
+            return
+        }
+        var commonHeaders: HTTPHeaders {
+            let headers: HTTPHeaders = [
+                "X-Naver-Client-Id":  Bundle.main.object(forInfoDictionaryKey: "Naver_Client_Id") as? String ?? "",
+                "X-Naver-Client-Secret": Bundle.main.object(forInfoDictionaryKey: "Naver_Client_Secret") as? String ?? "",
+                "Accept" : "application/json"
+            ]
+
+            return headers
+        }
+
+        
+        AF.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: commonHeaders)
+            .validate(statusCode: 200..<300)
+            .responseString(encoding: .utf8) { response in
+                print("Raw response: \(response.value ?? "nil")")
+            }
+            .responseDecodable(of: NaverLocalSearchResponse.self, decoder: JSONDecoder()) { response in
+                switch response.result {
+                case .success(let geocodeResponse):
+                    completion(.success(geocodeResponse))
+                case .failure(let error):
+                    print("지도 검색 실패: \(error)")
+                    completion(.failure(error))
+                }
+            }
+    }
+}
+
+
+struct NaverLocalSearchResponse: Codable {
+    let lastBuildDate: String
+    let total: Int
+    let start: Int
+    let display: Int
+    let items: [Place]
+    
+    struct Place: Codable {
+        let title: String
+        let link: String?
+        let category: String
+        let description: String
+        let telephone: String?
+        let address: String
+        let roadAddress: String
+        let mapx: String
+        let mapy: String
+    }
+}

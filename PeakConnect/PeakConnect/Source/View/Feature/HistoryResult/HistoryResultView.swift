@@ -84,7 +84,7 @@ extension HistoryResultView {
 extension HistoryResultView {
     
     func configure(_ result: HistoryListInfo) {
-        addressLabel.text = result.address
+        addressLabel.text = result.location
         countLabel.text = "총 \(result.leads.count)개의 리드 추천을 받았어요!"
     }
 }

@@ -199,7 +199,7 @@ extension NetworkManager {
                     completion(.failure(error))
                 }
             }
-    } 
+    }
     
     func requestHistList(completion: @escaping (Result<[HistoryInfo], AFError>) -> Void) {
         
@@ -300,11 +300,12 @@ extension NetworkManager {
  
 extension NetworkManager {
     
-    func requestSearch(value: String, completion: @escaping (Result<GeocodeResponse, AFError>) -> Void) {
-        let mapURL = "https://maps.apigw.ntruss.com/map-geocode/v2/geocode"
+    func requestSearch(value: String, completion: @escaping (Result<NaverLocalSearchResponse, AFError>) -> Void) {
+        let mapURL = "https://openapi.naver.com/v1/search/local.json"
         var urlComponents = URLComponents(string: mapURL)!
           urlComponents.queryItems = [
-            URLQueryItem(name: "query", value: value)
+            URLQueryItem(name: "query", value: value),
+            URLQueryItem(name: "display", value: "5")
           ]
         
         guard let url = urlComponents.url else {
@@ -313,8 +314,8 @@ extension NetworkManager {
         }
         var commonHeaders: HTTPHeaders {
             var headers: HTTPHeaders = [
-                "x-ncp-apigw-api-key-id": "2jhxaj4hz0",
-                "x-ncp-apigw-api-key": "QbT5EXQHGom0h9gwcTng4ikHZL442NJEw6bdNxh4",
+                "X-Naver-Client-Id": "f2Wfd4m2oi4wZyzEi392",
+                "X-Naver-Client-Secret": "GSxa5nzNXX",
                 "Accept" : "application/json"
             ]
 
@@ -327,7 +328,7 @@ extension NetworkManager {
             .responseString(encoding: .utf8) { response in
                 print("Raw response: \(response.value ?? "nil")")
             }
-            .responseDecodable(of: GeocodeResponse.self, decoder: JSONDecoder()) { response in
+            .responseDecodable(of: NaverLocalSearchResponse.self, decoder: JSONDecoder()) { response in
                 switch response.result {
                 case .success(let geocodeResponse):
                     completion(.success(geocodeResponse))
@@ -338,32 +339,24 @@ extension NetworkManager {
             }
     }
 }
-struct GeocodeResponse: Codable {
-    let status: String
-    let meta: Meta
-    let addresses: [Address]
-    let errorMessage: String?
 
-    struct Meta: Codable {
-        let totalCount: Int
-        let page: Int
-        let count: Int
-    }
 
-    struct Address: Codable {
-        let roadAddress: String?
-        let jibunAddress: String?
-        let englishAddress: String?
-        let addressElements: [AddressElement]?
-        let x: String?
-        let y: String?
-        let distance: Double?
-    }
-
-    struct AddressElement: Codable {
-        let types: [String]?
-        let longName: String?
-        let shortName: String?
-        let code: String?
+struct NaverLocalSearchResponse: Codable {
+    let lastBuildDate: String
+    let total: Int
+    let start: Int
+    let display: Int
+    let items: [Place]
+    
+    struct Place: Codable {
+        let title: String
+        let link: String?
+        let category: String
+        let description: String
+        let telephone: String?
+        let address: String
+        let roadAddress: String
+        let mapx: String
+        let mapy: String
     }
 }

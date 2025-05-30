@@ -51,7 +51,7 @@ extension HistoryResultCollectionViewCell {
         }
         
         adressNameLabel.snp.makeConstraints { make in
-            make.bottom.leading.equalToSuperview().inset(20)
+            make.bottom.leading.trailing.equalToSuperview().inset(20)
         }
     }
 }

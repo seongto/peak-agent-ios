@@ -40,7 +40,6 @@ class HistoryResultViewController: UIViewController {
         let titleLabel = UILabel()
         titleLabel.text = "리드 추천 결과"
         titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
-        titleLabel.textColor = .label
         navigationItem.titleView = titleLabel
         tabBarController?.tabBar.isHidden = true
         }

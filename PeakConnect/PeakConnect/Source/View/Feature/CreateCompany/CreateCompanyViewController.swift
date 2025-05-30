@@ -98,7 +98,6 @@ extension CreateCompanyViewController {
         let titleLabel = UILabel()
         titleLabel.text = "회사 정보 수정"
         titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
-        titleLabel.textColor = .label
         navigationItem.titleView = titleLabel
 
     }

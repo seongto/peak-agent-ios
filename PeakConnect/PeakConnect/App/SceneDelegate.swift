@@ -16,8 +16,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
 
-        let mainVC = UINavigationController(rootViewController: MainViewController()) 
+        let mainVC = UINavigationController(rootViewController: MainViewController())
+        mainVC.navigationBar.tintColor = .white
         let historyVC = UINavigationController(rootViewController: HistoryViewController())
+        historyVC.navigationBar.tintColor = .white
         let tabBarController = UITabBarController()
         tabBarController.setViewControllers([mainVC, historyVC], animated: false)
         

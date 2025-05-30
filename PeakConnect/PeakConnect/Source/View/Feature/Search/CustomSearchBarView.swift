@@ -40,8 +40,7 @@ final class CustomSearchBarView: UIView {
         containerView.addSubview(iconView)
         iconView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
-            make.top.equalToSuperview().inset(15)
-            make.bottom.equalToSuperview().inset(15)
+            make.centerY.equalToSuperview()
         }
         
         $0.leftView = containerView

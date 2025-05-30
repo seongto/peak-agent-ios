@@ -20,6 +20,9 @@ class MapView: UIView {
     // 리드(회사 등) 위치 마커 배열
     var leadMarkers: [NMFMarker] = []
     
+    var onShowAllResultsButtonTapped: (([Int]) -> Void)?
+    var onCellTapped: ((Int) -> Void)?
+    
     // 리드 검색 결과를 보여주는 뷰 (초기에는 숨김)
     let leadResultsView = MapLeadResultsView().then {
         $0.isHidden = true
@@ -238,6 +241,10 @@ class MapView: UIView {
             make.bottom.equalToSuperview()
             make.height.equalTo(200)
         }
+        
+        leadResultsView.onShowAllResultsButtonTapped = { [weak self] ids in
+            self?.onShowAllResultsButtonTapped?(ids)
+        }
 
         leadResultsView.onTrashButtonTapped = { [weak self] in
             self?.leadResultsView.isHidden = true
@@ -247,6 +254,11 @@ class MapView: UIView {
             self?.backButton.isHidden = false
             self?.leadMarkers.forEach { $0.mapView = nil }
             self?.leadMarkers.removeAll()
+        }
+        
+        leadResultsView.onCellTapped = { [weak self] id in  // 셀 클릭 처리 추가
+            print("📍 MapView에서 셀 클릭 id: \(id)")
+            self?.onCellTapped?(id)
         }
 
         leadResultsView.isHidden = false

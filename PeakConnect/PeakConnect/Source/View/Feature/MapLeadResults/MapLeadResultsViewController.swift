@@ -10,51 +10,60 @@ import RxSwift
 import RxCocoa
 
 class MapLeadResultsViewController: UIViewController {
-
+    
     private let resultsView = MapLeadResultsView()
     private let viewModel = MapLeadResultsViewModel()
     private let disposeBag = DisposeBag()
-
+    
     override func loadView() {
         view = resultsView
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         bindViewModel()
+        
+    }
+    
+    private func setupBindings() {
         resultsView.onTrashButtonTapped = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
         }
+        
+        resultsView.onShowAllResultsButtonTapped = { [weak self] ids in
+            guard let self = self else { return }
+            let sampleRecommendationId = 1  // 추천 응답의 recommendation_id
+            let detailVM = LeadDeatilViewModel(id: sampleRecommendationId)
+            let detailVC = LeadDeatilViewController(leadDeatilViewModel: detailVM)
+            self.navigationController?.pushViewController(detailVC, animated: true)
+        }
+        
+        resultsView.onCellTapped = { [weak self] id in
+            guard let self = self else { return }
+            let detailVM = LeadDeatilViewModel(id: id)
+            let detailVC = LeadDeatilViewController(leadDeatilViewModel: detailVM)
+            self.navigationController?.pushViewController(detailVC, animated: true)
+        }
     }
-
+    
     private func bindViewModel() {
-        let input = MapLeadResultsViewModel.Input(
-            fetchTrigger: Observable.just(())
-        )
-
+        let input = MapLeadResultsViewModel.Input(fetchTrigger: Observable.just(()))
         let output = viewModel.transform(input: input)
 
         output.leadIds
             .drive(onNext: { [weak self] leadIds in
-                // 받아온 리드 ID들을 출력하거나 UI 갱신
-                print("추천된 리드 ID 목록: \(leadIds)")
-                // TODO: 여기에 resultsView 업데이트 로직 추가 (예: updateLeadIds)
-                // self?.resultsView.updateLeadIds(leadIds)
+                let leads = leadIds.map { id in Lead(id: id, name: "Company \(id)", address: "Address \(id)", industry: "Industry", latitude: 0.0, longitude: 0.0) }
+                self?.resultsView.updateLeads(leads)
+
+                self?.resultsView.onCellTapped = { id in
+                    let detailVM = LeadDeatilViewModel(id: id)
+                    let detailVC = LeadDeatilViewController(leadDeatilViewModel: detailVM)
+                    self?.navigationController?.pushViewController(detailVC, animated: true)
+                }
             })
             .disposed(by: disposeBag)
 
-        output.isLoading
-            .drive(onNext: { isLoading in
-                // 필요 시 로딩 인디케이터 처리
-                print("로딩 중: \(isLoading)")
-            })
-            .disposed(by: disposeBag)
-
-        output.error
-            .drive(onNext: { errorMessage in
-                // 에러 처리
-                print("Error: \(errorMessage)")
-            })
-            .disposed(by: disposeBag)
+        output.isLoading.drive().disposed(by: disposeBag)
+        output.error.drive().disposed(by: disposeBag)
     }
 }

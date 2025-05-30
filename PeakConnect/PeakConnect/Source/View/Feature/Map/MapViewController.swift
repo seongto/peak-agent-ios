@@ -29,6 +29,23 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupBindings()
         setupActions()
+        
+        // 📍 셀 클릭 시 화면 전환 처리
+        mapView.onCellTapped = { [weak self] id in
+            guard let self = self else { return }
+            let detailVM = LeadDeatilViewModel(id: id)
+            let detailVC = LeadDeatilViewController(leadDeatilViewModel: detailVM)
+            self.navigationController?.pushViewController(detailVC, animated: true)
+        }
+        
+        // 📍 추천 결과 전체 보기 클릭 시 화면 전환 처리
+        mapView.onShowAllResultsButtonTapped = { [weak self] ids in
+            guard let self = self else { return }
+            let sampleRecommendationId = 1  // 추천 응답의 recommendation_id
+            let viewModel = HistoryResultViewModel(id: sampleRecommendationId)
+            let vc = HistoryResultViewController(viewModel: viewModel)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
 
     private func setupBindings() {
@@ -58,7 +75,6 @@ class MapViewController: UIViewController {
         // 로딩 처리
         output.isLoading
             .drive(onNext: { isLoading in
-                // 필요 시 로딩 인디케이터 처리
                 print("로딩 중: \(isLoading)")
             })
             .disposed(by: disposeBag)
@@ -88,6 +104,8 @@ class MapViewController: UIViewController {
     }
 
     @objc private func didTapLeadResultsButton() {
+        let mapLeadResultsVC = MapLeadResultsViewController()
+        navigationController?.pushViewController(mapLeadResultsVC, animated: true)
         mapView.showLeadResultsView()
         mapView.modalSearchButton.isHidden = true
         mapView.modalLeadSearchButton.isHidden = true

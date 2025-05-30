@@ -44,6 +44,8 @@ class MapLeadResultsView: UIView {
     private var details: [Lead] = []
 
     var onTrashButtonTapped: (() -> Void)?
+    var onShowAllResultsButtonTapped: (([Int]) -> Void)?
+    var onCellTapped: ((Int) -> Void)?
 
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -91,14 +93,20 @@ class MapLeadResultsView: UIView {
 
     private func setupActions() {
         trashButton.addTarget(self, action: #selector(trashButtonTapped), for: .touchUpInside)
+        showAllResultsButton.addTarget(self, action: #selector(showAllResultsTapped), for: .touchUpInside)
+    }
+    
+    @objc private func showAllResultsTapped() {
+        let sampleId = details.first?.id ?? 1  // 없으면 1
+        onShowAllResultsButtonTapped?([sampleId])
     }
 
     // MARK: - Public Methods
     func updateLeads(_ details: [Lead]) {
-        self.details = details // LeadDetail 배열 저장
+        print("🔥 updateLeads 호출, leads 개수: \(details.count)")  // ✅
+        self.details = details
         resultCollectionView.reloadData()
     }
-
     // MARK: - Actions
     @objc private func trashButtonTapped() {
         onTrashButtonTapped?()
@@ -123,7 +131,18 @@ extension MapLeadResultsView: UICollectionViewDataSource {
             ceo: "N/A",
             established: "N/A"
         )
+        
+        cell.onCellTapped = { [weak self] in  // 추가: 셀 내부 버튼 클릭 처리
+            print("📍 MapLeadResultsView에서 셀 클릭 id: \(detail.id)")
+            self?.onCellTapped?(detail.id)
+        }
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedId = details[indexPath.item].id
+        print("📍 collectionView didSelectItemAt 클릭됨, id: \(selectedId)")
+        onCellTapped?(selectedId)
     }
 }
 

@@ -313,9 +313,9 @@ extension NetworkManager {
             return
         }
         var commonHeaders: HTTPHeaders {
-            var headers: HTTPHeaders = [
-                "X-Naver-Client-Id": "f2Wfd4m2oi4wZyzEi392",
-                "X-Naver-Client-Secret": "GSxa5nzNXX",
+            let headers: HTTPHeaders = [
+                "X-Naver-Client-Id":  Bundle.main.object(forInfoDictionaryKey: "Naver_Client_Id") as? String ?? "",
+                "X-Naver-Client-Secret": Bundle.main.object(forInfoDictionaryKey: "Naver_Client_Secret") as? String ?? "",
                 "Accept" : "application/json"
             ]
 

@@ -13,6 +13,8 @@ final class SearchViewModel {
     
     private let searchRelay = PublishRelay<[NaverLocalSearchResponse.Place]>()
     private let disposeBag = DisposeBag()
+    private var result: [NaverLocalSearchResponse.Place]?
+
 }
 
 extension SearchViewModel {

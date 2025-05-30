@@ -165,7 +165,7 @@ class CompanyInfoCell: UICollectionViewCell {
         container.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(16)
             make.width.equalTo(320)
-            make.height.equalTo(200)
+            make.height.equalTo(300)
         }
         
         container.addSubview(companyNameLabel)

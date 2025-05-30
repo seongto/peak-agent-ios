@@ -40,6 +40,15 @@ struct ApiResponse<T: Codable>: Codable {
     let message: String?
 }
 
+struct Lead: Codable {
+    let id: Int
+    let name: String
+    let address: String
+    let industry: String
+    let latitude: Double
+    let longitude: Double
+}
+
 final class NetworkManager {
     
     static let shared = NetworkManager()
@@ -295,6 +304,40 @@ extension NetworkManager {
                 }
             }
 
+    }
+}
+
+extension NetworkManager {
+
+    struct LeadRecommendationResponse: Codable {
+        let recommendation_id: Int
+        let leads: [Lead]
+    }
+
+    func requestLeadRecommendation(latitude: Double, longitude: Double, location: String, completion: @escaping (Result<LeadRecommendationResponse, AFError>) -> Void) {
+        let endpoint = "lead/recommendation/new"
+        let parameters: [String: Any] = [
+            "latitude": latitude,
+            "longitude": longitude,
+            "location": location
+        ]
+
+        AF.request(baseURL + endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: commonHeaders)
+            .validate(statusCode: 200..<300)
+            .responseDecodable(of: ApiResponse<LeadRecommendationResponse>.self) { response in
+                switch response.result {
+                case .success(let apiResponse):
+                    if apiResponse.success, let data = apiResponse.data {
+                        completion(.success(data))
+                    } else {
+                        let errorMsg = apiResponse.message ?? "Unknown API error"
+                        print("API Error: \(errorMsg)")
+                        completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
     }
 }
  

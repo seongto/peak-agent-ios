@@ -29,5 +29,9 @@
 			</array>
 		</dict>
 	</dict>
+	<key>Naver_Client_Id</key>
+	<string>$(Naver_Client_Id)</string>
+	<key>Naver_Client_Secret</key>
+	<string>$(Naver_Client_Secret)</string>
 </dict>
 </plist>

@@ -97,10 +97,9 @@ class MapViewController: UIViewController {
     }
 
     @objc private func didTapSearchButton() {
-        let dummySearchVC = UIViewController()
-        dummySearchVC.view.backgroundColor = .white
+        let dummySearchVC = SearchViewController()
         dummySearchVC.title = "검색"
-        navigationController?.pushViewController(dummySearchVC, animated: true)
+        navigationController?.pushViewController(dummySearchVC, animated: false)
     }
 
     @objc private func didTapLeadResultsButton() {

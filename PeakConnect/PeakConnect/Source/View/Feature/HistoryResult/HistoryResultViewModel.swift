@@ -14,10 +14,10 @@ class HistoryResultViewModel {
     private var id: Int
     
     private let historyListRelay = PublishRelay<HistoryListInfo>()
-    private let leadsRelay = PublishRelay<[HistoryListInfo.Lead]>()
+    private let leadsRelay = PublishRelay<[Lead]>()
     private var idRelay = PublishRelay<Int>()
     private let disposeBag = DisposeBag()
-    private var leads: [HistoryListInfo.Lead]?
+    private var leads: [Lead]?
     
     init(id: Int) {
         self.id = id
@@ -34,7 +34,7 @@ extension HistoryResultViewModel {
     
     struct Output {
         let historyList: Driver<HistoryListInfo>
-        let leads: Driver<[HistoryListInfo.Lead]>
+        let leads: Driver<[Lead]>
         let id: Driver<Int>
     }
     

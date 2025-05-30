@@ -11,6 +11,12 @@ import Then
 
 class LeadDeatilView: UIView {
     
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+    }
+    
+    private let contentView = UIView()
+    
     private let companyInformationView = LeadComponentsView().then {
         $0.backgroundColor = .text
         $0.layer.cornerRadius = 24
@@ -94,12 +100,29 @@ extension LeadDeatilView {
     
     private func setupUI() {
         [
-            companyInformationView,
-            detailView,
-            recommendView,
+            scrollView,
             toastView
         ].forEach {
             addSubview($0)
+        }
+        
+        scrollView.addSubview(contentView)
+        
+        [
+            companyInformationView,
+            detailView,
+            recommendView
+        ].forEach {
+            contentView.addSubview($0)
+        }
+        
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
         }
         
         companyInformationView.topView.addSubview(companyInformationLabel)
@@ -129,7 +152,7 @@ extension LeadDeatilView {
         }
         
         companyInformationView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).inset(20)
+            make.top.equalToSuperview().inset(20)
             make.horizontalEdges.equalToSuperview().inset(20)
             make.bottom.equalTo(companyInformationDetailLabel.snp.bottom).offset(20)
         }
@@ -152,6 +175,7 @@ extension LeadDeatilView {
             make.top.equalTo(detailView.snp.bottom).offset(20)
             make.horizontalEdges.equalToSuperview().inset(20)
             make.bottom.equalTo(recommendDetailLabel.snp.bottom).offset(20)
+            make.bottom.equalToSuperview()
         }
         
         toastView.snp.makeConstraints { make in

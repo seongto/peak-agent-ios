@@ -40,10 +40,9 @@ class MapViewController: UIViewController {
     
     // 검색 버튼 탭 시 호출되는 메소드
     @objc private func didTapSearchButton() {
-        let dummySearchVC = UIViewController()
-        dummySearchVC.view.backgroundColor = .white
+        let dummySearchVC = SearchViewController()
         dummySearchVC.title = "검색"
-        navigationController?.pushViewController(dummySearchVC, animated: true)
+        navigationController?.pushViewController(dummySearchVC, animated: false)
     }
     
     // 현재 위치에서 리드 찾기 버튼 탭 시 호출 되는 메소드

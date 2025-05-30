@@ -11,10 +11,10 @@ import Then
 
 final class SearchCollectionViewCell: UICollectionViewCell {
     
-    static let id = "HistoryResultCollectionViewCell"
+    static let id = "SearchCollectionViewCell"
     
-    private let companyNameLabel = UILabel().then {
-        $0.text = "더선한 주식회사"
+    private let searchLabel = UILabel().then {
+        $0.text = "서울시 강남구"
         $0.font = UIFont(name: "Pretendard-Bold", size: 16)
     }
     
@@ -40,13 +40,13 @@ extension SearchCollectionViewCell {
         layer.cornerRadius = 24
         
         [
-            companyNameLabel,
+            searchLabel,
             adressNameLabel
         ].forEach {
             addSubview($0)
         }
         
-        companyNameLabel.snp.makeConstraints { make in
+        searchLabel.snp.makeConstraints { make in
             make.top.leading.equalToSuperview().inset(20)
         }
         
@@ -59,7 +59,7 @@ extension SearchCollectionViewCell {
 extension SearchCollectionViewCell {
     
     func configure(data: HistoryListInfo.Lead) {
-        companyNameLabel.text = data.address
+        searchLabel.text = data.address
         adressNameLabel.text = data.address
     }
 }

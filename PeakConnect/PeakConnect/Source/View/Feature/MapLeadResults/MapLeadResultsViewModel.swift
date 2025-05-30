@@ -12,17 +12,17 @@ import RxCocoa
 class MapLeadResultsViewModel {
 
     struct Input {
-        let fetchTrigger: Observable<Int>
+        let fetchTrigger: Observable<Void>
     }
 
     struct Output {
-        let detail: Driver<LeadDetail>
+        let leadIds: Driver<[Int]>
         let isLoading: Driver<Bool>
         let error: Driver<String>
     }
 
     private let disposeBag = DisposeBag()
-    private let detailRelay = PublishRelay<LeadDetail>()
+    private let leadsRelay = PublishRelay<[Int]>()
     private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
     private let errorRelay = PublishRelay<String>()
 
@@ -31,31 +31,35 @@ class MapLeadResultsViewModel {
             .do(onNext: { [weak self] _ in
                 self?.isLoadingRelay.accept(true)
             })
-            .flatMapLatest { leadId in
-                Observable<LeadDetail>.create { observer in
-                    NetworkManager.shared.requestLeadDetail(id: leadId) { result in
+            .flatMapLatest { _ -> Observable<[Int]> in
+                return Observable.create { observer in
+                    NetworkManager.shared.requestLeadRecommendation(
+                        latitude: 37.5665,
+                        longitude: 126.9780,
+                        location: "서울특별시 중구"
+                    ) { result in
+                        self.isLoadingRelay.accept(false)
                         switch result {
-                        case .success(let detail):
-                            observer.onNext(detail)
+                        case .success(let data):
+                            let ids = data.leads.map { $0.id }
+                            observer.onNext(ids)
                             observer.onCompleted()
                         case .failure(let error):
-                            observer.onError(error)
+                            self.errorRelay.accept(error.localizedDescription)
+                            observer.onNext([])
+                            observer.onCompleted()
                         }
                     }
                     return Disposables.create()
                 }
             }
-            .subscribe(onNext: { [weak self] detail in
-                self?.detailRelay.accept(detail)
-                self?.isLoadingRelay.accept(false)
-            }, onError: { [weak self] error in
-                self?.errorRelay.accept(error.localizedDescription)
-                self?.isLoadingRelay.accept(false)
+            .subscribe(onNext: { [weak self] ids in
+                self?.leadsRelay.accept(ids)
             })
             .disposed(by: disposeBag)
 
         return Output(
-            detail: detailRelay.asDriver(onErrorDriveWith: .empty()),
+            leadIds: leadsRelay.asDriver(onErrorDriveWith: .empty()),
             isLoading: isLoadingRelay.asDriver(),
             error: errorRelay.asDriver(onErrorJustReturn: "알 수 없는 오류 발생")
         )

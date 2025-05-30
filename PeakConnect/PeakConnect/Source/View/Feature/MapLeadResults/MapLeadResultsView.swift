@@ -41,7 +41,7 @@ class MapLeadResultsView: UIView {
     }
 
     // MARK: - Properties
-    private var details: [LeadDetail] = []
+    private var details: [Lead] = []
 
     var onTrashButtonTapped: (() -> Void)?
 
@@ -66,7 +66,7 @@ class MapLeadResultsView: UIView {
         resultCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview().inset(80)
-            make.height.equalTo(220)
+            make.height.equalTo(250)
         }
 
         addSubview(showAllResultsButton)
@@ -94,7 +94,7 @@ class MapLeadResultsView: UIView {
     }
 
     // MARK: - Public Methods
-    func updateLeads(_ details: [LeadDetail]) {
+    func updateLeads(_ details: [Lead]) {
         self.details = details // LeadDetail 배열 저장
         resultCollectionView.reloadData()
     }
@@ -120,8 +120,8 @@ extension MapLeadResultsView: UICollectionViewDataSource {
             companyName: detail.name,
             address: detail.address,
             tags: detail.industry,
-            ceo: detail.ceo_name,
-            established: "\(detail.year_founded)"
+            ceo: "N/A",
+            established: "N/A"
         )
         return cell
     }

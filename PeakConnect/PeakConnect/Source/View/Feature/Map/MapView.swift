@@ -213,7 +213,7 @@ class MapView: UIView {
         }
     }
 
-    func updateLeadResults(_ leads: [HistoryListInfo.Lead]) {
+    func updateLeadResults(_ leads: [Lead]) {
         leadResultsView.updateLeads(leads)
     }
     

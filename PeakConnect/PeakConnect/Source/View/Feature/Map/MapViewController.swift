@@ -55,12 +55,15 @@ class MapViewController: UIViewController {
             }
             .disposed(by: disposeBag)
 
+        // 로딩 처리
         output.isLoading
             .drive(onNext: { isLoading in
-                // 필요시 로딩 처리
+                // 필요 시 로딩 인디케이터 처리
+                print("로딩 중: \(isLoading)")
             })
             .disposed(by: disposeBag)
 
+        // 오류 처리
         output.error
             .drive(onNext: { errorMessage in
                 print("Error: \(errorMessage)")

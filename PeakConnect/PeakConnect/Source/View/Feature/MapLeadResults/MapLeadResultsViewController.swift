@@ -29,22 +29,24 @@ class MapLeadResultsViewController: UIViewController {
 
     private func bindViewModel() {
         let input = MapLeadResultsViewModel.Input(
-            fetchTrigger: Observable.just(1)
+            fetchTrigger: Observable.just(())
         )
 
         let output = viewModel.transform(input: input)
 
-        output.detail
-            .drive(onNext: { [weak self] detail in
-                // detail 정보를 UI에 표시
-                print("리드 상세정보: \(detail)")
-                // 예: self?.resultsView.updateDetail(detail)
+        output.leadIds
+            .drive(onNext: { [weak self] leadIds in
+                // 받아온 리드 ID들을 출력하거나 UI 갱신
+                print("추천된 리드 ID 목록: \(leadIds)")
+                // TODO: 여기에 resultsView 업데이트 로직 추가 (예: updateLeadIds)
+                // self?.resultsView.updateLeadIds(leadIds)
             })
             .disposed(by: disposeBag)
 
         output.isLoading
             .drive(onNext: { isLoading in
-                // 로딩 인디케이터 처리
+                // 필요 시 로딩 인디케이터 처리
+                print("로딩 중: \(isLoading)")
             })
             .disposed(by: disposeBag)
 

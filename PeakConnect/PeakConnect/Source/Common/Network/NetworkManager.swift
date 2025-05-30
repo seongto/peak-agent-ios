@@ -298,3 +298,72 @@ extension NetworkManager {
     }
 }
  
+extension NetworkManager {
+    
+    func requestSearch(value: String, completion: @escaping (Result<GeocodeResponse, AFError>) -> Void) {
+        let mapURL = "https://maps.apigw.ntruss.com/map-geocode/v2/geocode"
+        var urlComponents = URLComponents(string: mapURL)!
+          urlComponents.queryItems = [
+            URLQueryItem(name: "query", value: value)
+          ]
+        
+        guard let url = urlComponents.url else {
+            print("Invalid URL")
+            return
+        }
+        var commonHeaders: HTTPHeaders {
+            var headers: HTTPHeaders = [
+                "x-ncp-apigw-api-key-id": "2jhxaj4hz0",
+                "x-ncp-apigw-api-key": "QbT5EXQHGom0h9gwcTng4ikHZL442NJEw6bdNxh4",
+                "Accept" : "application/json"
+            ]
+
+            return headers
+        }
+
+        
+        AF.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: commonHeaders)
+            .validate(statusCode: 200..<300)
+            .responseString(encoding: .utf8) { response in
+                print("Raw response: \(response.value ?? "nil")")
+            }
+            .responseDecodable(of: GeocodeResponse.self, decoder: JSONDecoder()) { response in
+                switch response.result {
+                case .success(let geocodeResponse):
+                    completion(.success(geocodeResponse))
+                case .failure(let error):
+                    print("지도 검색 실패: \(error)")
+                    completion(.failure(error))
+                }
+            }
+    }
+}
+struct GeocodeResponse: Codable {
+    let status: String
+    let meta: Meta
+    let addresses: [Address]
+    let errorMessage: String?
+
+    struct Meta: Codable {
+        let totalCount: Int
+        let page: Int
+        let count: Int
+    }
+
+    struct Address: Codable {
+        let roadAddress: String?
+        let jibunAddress: String?
+        let englishAddress: String?
+        let addressElements: [AddressElement]?
+        let x: String?
+        let y: String?
+        let distance: Double?
+    }
+
+    struct AddressElement: Codable {
+        let types: [String]?
+        let longName: String?
+        let shortName: String?
+        let code: String?
+    }
+}

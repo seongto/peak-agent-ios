@@ -58,8 +58,8 @@ extension SearchCollectionViewCell {
 
 extension SearchCollectionViewCell {
     
-    func configure(data: HistoryListInfo.Lead) {
-        searchLabel.text = data.address
-        adressNameLabel.text = data.address
+    func configure(data: GeocodeResponse.Address) {
+        adressNameLabel.text = data.roadAddress
+        //adressNameLabel.text = data.address
     }
 }

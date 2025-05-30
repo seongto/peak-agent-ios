@@ -11,7 +11,7 @@ import Then
 
 final class SearchView: UIView {
     
-    private let searchBar = CustomSearchBarView()
+    let searchBar = CustomSearchBarView()
     
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
         $0.showsVerticalScrollIndicator = false

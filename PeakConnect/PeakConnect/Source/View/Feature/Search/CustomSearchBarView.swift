@@ -11,7 +11,7 @@ import Then
 
 final class CustomSearchBarView: UIView {
 
-    private let textField = UITextField().then {
+    let textField = UITextField().then {
         $0.attributedPlaceholder = NSAttributedString(
             string: "검색어를 입력하세요.",
             attributes: [

@@ -22,39 +22,40 @@ class MapLeadResultsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         bindViewModel()
-        resultsView.onTrashButtonTapped = { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
-        }
     }
 
     private func bindViewModel() {
-        let input = MapLeadResultsViewModel.Input(
-            fetchTrigger: Observable.just(())
-        )
-
+        let input = MapLeadResultsViewModel.Input(fetchTrigger: Observable.just(()))
         let output = viewModel.transform(input: input)
 
-        output.leadIds
-            .drive(onNext: { [weak self] leadIds in
-                // 받아온 리드 ID들을 출력하거나 UI 갱신
-                print("추천된 리드 ID 목록: \(leadIds)")
-                // TODO: 여기에 resultsView 업데이트 로직 추가 (예: updateLeadIds)
-                // self?.resultsView.updateLeadIds(leadIds)
+        output.details
+            .drive(onNext: { [weak self] detail in
+                self?.resultsView.updateLeads(detail)  // 전체 데이터를 넘기고
             })
             .disposed(by: disposeBag)
 
         output.isLoading
-            .drive(onNext: { isLoading in
-                // 필요 시 로딩 인디케이터 처리
-                print("로딩 중: \(isLoading)")
-            })
+            .drive()
             .disposed(by: disposeBag)
 
         output.error
-            .drive(onNext: { errorMessage in
-                // 에러 처리
-                print("Error: \(errorMessage)")
-            })
+            .drive()
             .disposed(by: disposeBag)
+
+        resultsView.onTrashButtonTapped = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+
+        resultsView.onShowAllResultsButtonTapped = { [weak self] id in
+            let viewModel = HistoryResultViewModel(id: id)
+            let vc = HistoryResultViewController(viewModel: viewModel)
+            self?.navigationController?.pushViewController(vc, animated: true)
+        }
+
+        resultsView.onCellTapped = { [weak self] id in
+            let detailVM = LeadDeatilViewModel(id: id)
+            let detailVC = LeadDeatilViewController(leadDeatilViewModel: detailVM)
+            self?.navigationController?.pushViewController(detailVC, animated: true)
+        }
     }
 }

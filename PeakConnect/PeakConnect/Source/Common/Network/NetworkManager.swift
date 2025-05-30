@@ -239,6 +239,7 @@ extension NetworkManager {
         companyUUID = UserDefaults.standard.uuid
     
         let endpoint = "lead/recommendation/\(id)/list"
+        print("📡 requestHistLists 호출 - id: \(id), endpoint: \(endpoint)")
         guard let url = URL(string: baseURL + endpoint) else {
             print("Invalid URL")
             return
@@ -261,7 +262,7 @@ extension NetworkManager {
                         completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
                     }
                 case .failure(let error):
-                    //print(error)
+                    print(error)
                     completion(.failure(error))
                 }
             }
@@ -302,12 +303,12 @@ extension NetworkManager {
     }
 }
 
-extension NetworkManager {
+struct LeadRecommendationResponse: Codable {
+    let recommendation_id: Int
+    let leads: [Lead]
+}
 
-    struct LeadRecommendationResponse: Codable {
-        let recommendation_id: Int
-        let leads: [Lead]
-    }
+extension NetworkManager {
 
     func requestLeadRecommendation(latitude: Double, longitude: Double, location: String, completion: @escaping (Result<LeadRecommendationResponse, AFError>) -> Void) {
         let endpoint = "lead/recommendation/new"

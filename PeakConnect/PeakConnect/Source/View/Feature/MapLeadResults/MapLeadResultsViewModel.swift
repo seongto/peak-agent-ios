@@ -5,7 +5,6 @@
 //  Created by 강민성 on 5/26/25.
 //
 
-import Foundation
 import RxSwift
 import RxCocoa
 
@@ -16,13 +15,13 @@ class MapLeadResultsViewModel {
     }
 
     struct Output {
-        let leadIds: Driver<[Int]>
+        let details: Driver<LeadRecommendationResponse>
         let isLoading: Driver<Bool>
         let error: Driver<String>
     }
 
     private let disposeBag = DisposeBag()
-    private let leadsRelay = PublishRelay<[Int]>()
+    private let detailsRelay = PublishRelay<LeadRecommendationResponse>()
     private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
     private let errorRelay = PublishRelay<String>()
 
@@ -31,7 +30,10 @@ class MapLeadResultsViewModel {
             .do(onNext: { [weak self] _ in
                 self?.isLoadingRelay.accept(true)
             })
-            .flatMapLatest { _ -> Observable<[Int]> in
+            .flatMapLatest { [weak self] _ -> Observable<LeadRecommendationResponse> in
+                guard let self = self else {
+                    return Observable.empty()
+                }
                 return Observable.create { observer in
                     NetworkManager.shared.requestLeadRecommendation(
                         latitude: 37.5665,
@@ -41,25 +43,23 @@ class MapLeadResultsViewModel {
                         self.isLoadingRelay.accept(false)
                         switch result {
                         case .success(let data):
-                            let ids = data.leads.map { $0.id }
-                            observer.onNext(ids)
+                            observer.onNext(data)
                             observer.onCompleted()
                         case .failure(let error):
                             self.errorRelay.accept(error.localizedDescription)
-                            observer.onNext([])
-                            observer.onCompleted()
+                            observer.onError(error)
                         }
                     }
                     return Disposables.create()
                 }
             }
-            .subscribe(onNext: { [weak self] ids in
-                self?.leadsRelay.accept(ids)
+            .subscribe(onNext: { [weak self] detail in
+                self?.detailsRelay.accept(detail)
             })
             .disposed(by: disposeBag)
 
         return Output(
-            leadIds: leadsRelay.asDriver(onErrorDriveWith: .empty()),
+            details: detailsRelay.asDriver(onErrorDriveWith: .empty()),
             isLoading: isLoadingRelay.asDriver(),
             error: errorRelay.asDriver(onErrorJustReturn: "알 수 없는 오류 발생")
         )

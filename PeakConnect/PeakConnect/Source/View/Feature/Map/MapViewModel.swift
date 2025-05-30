@@ -19,8 +19,7 @@ class MapViewModel {
     }
 
     struct Output {
-        let leads: Driver<[Lead]>
-        let leadCoordinates: Driver<[NMGLatLng]>
+        let details: Driver<LeadRecommendationResponse>
         let isLoading: Driver<Bool>
         let error: Driver<String>
     }
@@ -29,9 +28,9 @@ class MapViewModel {
     private let errorTracker = PublishSubject<String>()
 
     func transform(input: Input) -> Output {
-        let leads = input.fetchLeadsTrigger
-            .flatMapLatest { [weak self] _ -> Observable<[Lead]> in
-                guard let self = self else { return Observable.just([]) }
+        let details = input.fetchLeadsTrigger
+            .flatMapLatest { [weak self] _ -> Observable<LeadRecommendationResponse> in
+                guard let self = self else { return Observable.empty() }
                 self.isLoading.accept(true)
                 return Observable.create { observer in
                     NetworkManager.shared.requestLeadRecommendation(
@@ -42,24 +41,20 @@ class MapViewModel {
                         self.isLoading.accept(false)
                         switch result {
                         case .success(let data):
-                            print("✅ API 응답 leads: \(data.leads)")
-                            observer.onNext(data.leads)
+                            observer.onNext(data)
+                            observer.onCompleted()
                         case .failure(let error):
                             self.errorTracker.onNext(error.localizedDescription)
-                            observer.onNext([])
+                            observer.onError(error)
                         }
                     }
                     return Disposables.create()
                 }
             }
-            .asDriver(onErrorJustReturn: [])
-
-        let leadCoordinates = leads
-            .map { $0.map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) } }
+            .asDriver(onErrorDriveWith: .empty())
 
         return Output(
-            leads: leads,
-            leadCoordinates: leadCoordinates,
+            details: details,
             isLoading: isLoading.asDriver(),
             error: errorTracker.asDriver(onErrorJustReturn: "알 수 없는 오류 발생")
         )

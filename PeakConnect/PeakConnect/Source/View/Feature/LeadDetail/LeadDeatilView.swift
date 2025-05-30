@@ -231,16 +231,16 @@ extension LeadDeatilView {
 extension LeadDeatilView {
     
     func configure(_ result: LeadInfo) {
-        companyInformationDetailLabel.text = result.summary
         nameLabel.text = result.ceo_name
         locationView.configure(text: result.address)
         siteView.configure(text: result.website)
         yearView.configure(text: "\(result.year_founded)")
+        
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 6
 
         let recommendDetailAttributedString = NSAttributedString(
-            string: result.summary,
+            string: result.match_reason,
             attributes: [
                 .font: UIFont(name: "Pretendard-Regular", size: 14) as Any,
                 .paragraphStyle: paragraphStyle
@@ -248,7 +248,7 @@ extension LeadDeatilView {
         )
         
         let companyAttributedString = NSAttributedString(
-            string: result.match_reason,
+            string: result.summary,
             attributes: [
                 .font: UIFont(name: "Pretendard-Regular", size: 14) as Any,
                 .paragraphStyle: paragraphStyle

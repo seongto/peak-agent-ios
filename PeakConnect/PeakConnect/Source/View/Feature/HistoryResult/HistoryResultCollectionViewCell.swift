@@ -58,8 +58,8 @@ extension HistoryResultCollectionViewCell {
 
 extension HistoryResultCollectionViewCell {
     
-    func configure(data: HistoryListInfo.Lead) {
-        companyNameLabel.text = data.address
+    func configure(data: Lead) {
+        companyNameLabel.text = data.name
         adressNameLabel.text = data.address
     }
 }

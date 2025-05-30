@@ -9,17 +9,8 @@ import Foundation
 import Alamofire
 
 struct HistoryListInfo: Codable {
-    let address: String
+    let location: String
     let leads: [Lead]
-    
-    struct Lead: Codable {
-        let id: Int
-        let name: String
-        let address: String
-        let industry: String
-        let latitude: Double
-        let longitude: Double
-    }
 }
 
 struct LeadInfo: Codable {
@@ -28,7 +19,7 @@ struct LeadInfo: Codable {
     let address: String
     let website: String
     let match_reason: String
-    let year_founded: Int
+    let year_founded: String
     let ceo_name: String
     let industry: String
 }
@@ -236,6 +227,7 @@ extension NetworkManager {
                         completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
                     }
                 case .failure(let error):
+                    print(error)
                     completion(.failure(error))
                 }
             }
@@ -258,6 +250,7 @@ extension NetworkManager {
                 print("Raw response: \(response.value ?? "nil")")
             }
             .responseDecodable(of: ApiResponse<HistoryListInfo>.self, decoder: JSONDecoder()) { response in
+                print(response.result)
                 switch response.result {
                 case .success(let apiResponse):
                     if apiResponse.success, let historyList = apiResponse.data {
@@ -268,6 +261,7 @@ extension NetworkManager {
                         completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
                     }
                 case .failure(let error):
+                    //print(error)
                     completion(.failure(error))
                 }
             }
@@ -300,6 +294,7 @@ extension NetworkManager {
                         completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
                     }
                 case .failure(let error):
+                    print(error)
                     completion(.failure(error))
                 }
             }

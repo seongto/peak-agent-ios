@@ -12,6 +12,7 @@ import Then
 class MapLeadResultsView: UIView {
 
     // MARK: - UI Components
+    
     private let resultCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -41,10 +42,10 @@ class MapLeadResultsView: UIView {
     }
 
     // MARK: - Properties
-    private var details: [Lead] = []
+    private var details: LeadRecommendationResponse?
 
     var onTrashButtonTapped: (() -> Void)?
-    var onShowAllResultsButtonTapped: (([Int]) -> Void)?
+    var onShowAllResultsButtonTapped: ((Int) -> Void)?
     var onCellTapped: ((Int) -> Void)?
 
     // MARK: - Initializers
@@ -63,12 +64,12 @@ class MapLeadResultsView: UIView {
     // MARK: - Setup Methods
     private func setupUI() {
         backgroundColor = .clear
-
+        
         addSubview(resultCollectionView)
         resultCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview().inset(80)
-            make.height.equalTo(250)
+            make.top.equalToSuperview().offset(35)
+            make.height.equalTo(220)
         }
 
         addSubview(showAllResultsButton)
@@ -97,57 +98,48 @@ class MapLeadResultsView: UIView {
     }
     
     @objc private func showAllResultsTapped() {
-        let sampleId = details.first?.id ?? 1  // 없으면 1
-        onShowAllResultsButtonTapped?([sampleId])
+        guard let id = details?.recommendation_id else { return }
+        onShowAllResultsButtonTapped?(id) // ✅ Pass recommendation_id to HistoryResult
     }
 
-    // MARK: - Public Methods
-    func updateLeads(_ details: [Lead]) {
-        print("🔥 updateLeads 호출, leads 개수: \(details.count)")  // ✅
-        self.details = details
-        resultCollectionView.reloadData()
-    }
-    // MARK: - Actions
     @objc private func trashButtonTapped() {
         onTrashButtonTapped?()
+    }
+
+    func updateLeads(_ details: LeadRecommendationResponse) {
+        self.details = details
+        print("업데이트된 leads 개수: \(details.leads.count)")
+        resultCollectionView.reloadData()
     }
 }
 
 // MARK: - UICollectionViewDataSource
-extension MapLeadResultsView: UICollectionViewDataSource {
+extension MapLeadResultsView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return details.count
+        print("📍 컬렉션뷰 셀 개수: \(details?.leads.count ?? 0)")
+        return details?.leads.count ?? 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CompanyInfoCell.identifier, for: indexPath) as? CompanyInfoCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CompanyInfoCell.identifier, for: indexPath) as? CompanyInfoCell,
+              let lead = details?.leads[indexPath.item] else {
             return UICollectionViewCell()
         }
-        let detail = details[indexPath.item]
-        cell.configure(
-            companyName: detail.name,
-            address: detail.address,
-            tags: detail.industry,
-            ceo: "N/A",
-            established: "N/A"
-        )
-        
-        cell.onCellTapped = { [weak self] in  // 추가: 셀 내부 버튼 클릭 처리
-            print("📍 MapLeadResultsView에서 셀 클릭 id: \(detail.id)")
-            self?.onCellTapped?(detail.id)
+
+        cell.configure(companyName: lead.name, address: lead.address, tags: lead.industry, ceo: "N/A", established: "N/A")
+
+        // ✅ 셀 클릭 시 recommendation_id만 넘김
+        cell.onCellTapped = { [weak self] in
+            self?.onCellTapped?(lead.id) // lead.id를 넘김!
         }
         return cell
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedId = details[indexPath.item].id
-        print("📍 collectionView didSelectItemAt 클릭됨, id: \(selectedId)")
-        onCellTapped?(selectedId)
-    }
-}
 
-// MARK: - UICollectionViewDelegateFlowLayout
-extension MapLeadResultsView: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let lead = details?.leads[indexPath.item] else { return }
+        onCellTapped?(lead.id) // lead.id를 넘김!
+    }
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 320, height: 200)
     }

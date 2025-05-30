@@ -262,7 +262,7 @@ extension NetworkManager {
                         completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
                     }
                 case .failure(let error):
-                    //print(error)
+                    print(error)
                     completion(.failure(error))
                 }
             }
@@ -303,15 +303,15 @@ extension NetworkManager {
     }
 }
 
+struct LeadRecommendationResponse: Codable {
+    let recommendation_id: Int
+    let leads: [Lead]
+}
+
 extension NetworkManager {
 
-    struct LeadRecommendationResponse: Codable {
-        let recommendation_id: Int
-        let leads: [Lead]
-    }
-
     func requestLeadRecommendation(latitude: Double, longitude: Double, location: String, completion: @escaping (Result<LeadRecommendationResponse, AFError>) -> Void) {
-        let endpoint = "lead/recommendation/sample-new"
+        let endpoint = "lead/recommendation/new"
         let parameters: [String: Any] = [
             "latitude": latitude,
             "longitude": longitude,

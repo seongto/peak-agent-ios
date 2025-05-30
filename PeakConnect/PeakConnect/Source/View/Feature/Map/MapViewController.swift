@@ -39,12 +39,10 @@ class MapViewController: UIViewController {
         }
         
         // 📍 추천 결과 전체 보기 클릭 시 화면 전환 처리
-        mapView.onShowAllResultsButtonTapped = { [weak self] ids in
-            guard let self = self else { return }
-            let sampleRecommendationId = 1  // 추천 응답의 recommendation_id
-            let viewModel = HistoryResultViewModel(id: sampleRecommendationId)
+        mapView.onShowAllResultsButtonTapped = { [weak self] recommendationId in
+            let viewModel = HistoryResultViewModel(id: recommendationId)
             let vc = HistoryResultViewController(viewModel: viewModel)
-            self.navigationController?.pushViewController(vc, animated: true)
+            self?.navigationController?.pushViewController(vc, animated: true)
         }
     }
 
@@ -54,36 +52,33 @@ class MapViewController: UIViewController {
         )
         let output = viewModel.transform(input: input)
 
-        output.leadCoordinates
-            .drive(with: self) { owner, coords in
-                owner.mapView.showLeadMarkers(coords)
-            }
+        output.details
+            .drive(onNext: { [weak self] details in
+                guard let self = self else { return }
+                self.mapView.showLeadMarkers(details.leads.map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) })
+                self.mapView.updateLeadResults(details.leads, recommendationId: details.recommendation_id)
+                self.mapView.showLeadResultsView(recommendationId: details.recommendation_id)
+                
+                self.mapView.currentRecommendationId = details.recommendation_id  // 저장!
+                self.mapView.leadResultsView.isHidden = false
+                self.mapView.leadModalView.isHidden = true
+                self.mapView.modalSearchButton.isHidden = true
+                self.mapView.modalLeadSearchButton.isHidden = true
+                self.mapView.backButton.isHidden = true
+            })
             .disposed(by: disposeBag)
 
-        output.leads
-            .drive(with: self) { owner, leads in
-                owner.mapView.updateLeadResults(leads)
-                owner.mapView.showLeadResultsView()
-                owner.mapView.leadResultsView.isHidden = false
-                owner.mapView.leadModalView.isHidden = true
-                owner.mapView.modalSearchButton.isHidden = true
-                owner.mapView.modalLeadSearchButton.isHidden = true
-                owner.mapView.backButton.isHidden = true
-            }
-            .disposed(by: disposeBag)
-
-        // 로딩 처리
         output.isLoading
             .drive(onNext: { isLoading in
                 print("로딩 중: \(isLoading)")
             })
             .disposed(by: disposeBag)
 
-        // 오류 처리
         output.error
             .drive(onNext: { errorMessage in
                 print("Error: \(errorMessage)")
             })
+     
             .disposed(by: disposeBag)
     }
 
@@ -105,7 +100,10 @@ class MapViewController: UIViewController {
     @objc private func didTapLeadResultsButton() {
         let mapLeadResultsVC = MapLeadResultsViewController()
         navigationController?.pushViewController(mapLeadResultsVC, animated: true)
-        mapView.showLeadResultsView()
+        
+        let recommendationId = mapView.currentRecommendationId ?? 0  // 안전하게 처리
+        mapView.showLeadResultsView(recommendationId: recommendationId)
+        
         mapView.modalSearchButton.isHidden = true
         mapView.modalLeadSearchButton.isHidden = true
         mapView.backButton.isHidden = true

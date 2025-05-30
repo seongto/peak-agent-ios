@@ -15,7 +15,7 @@ class CompanyInfoCell: UICollectionViewCell {
 
     var onCellTapped: (() -> Void)?  // 셀 클릭 시 콜백
 
-    private let containerButton = UIButton(type: .system).then {
+    private let backgroundContainerView = UIView().then {
         $0.backgroundColor = UIColor.primary
         $0.layer.cornerRadius = 24
         $0.layer.shadowColor = UIColor.black.cgColor
@@ -135,12 +135,13 @@ class CompanyInfoCell: UICollectionViewCell {
     }
 
     private func setupUI() {
-        contentView.addSubview(containerButton)
-        containerButton.snp.makeConstraints { $0.edges.equalToSuperview().inset(16) }
+        
+        contentView.addSubview(backgroundContainerView)
+        backgroundContainerView.snp.makeConstraints { $0.edges.equalToSuperview().inset(16) }
 
-        containerButton.addSubview(companyNameLabel)
-        containerButton.addSubview(addressLabel)
-        containerButton.addSubview(bottomStackView)
+        backgroundContainerView.addSubview(companyNameLabel)
+        backgroundContainerView.addSubview(addressLabel)
+        backgroundContainerView.addSubview(bottomStackView)
 
         ceoContainer.addSubview(ceoStack)
         establishedContainer.addSubview(establishedStack)
@@ -159,7 +160,8 @@ class CompanyInfoCell: UICollectionViewCell {
     }
 
     private func setupAction() {
-        containerButton.addTarget(self, action: #selector(handleCellTap), for: .touchUpInside)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleCellTap))
+        contentView.addGestureRecognizer(tapGesture)
     }
 
     @objc private func handleCellTap() {

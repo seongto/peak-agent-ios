@@ -75,7 +75,6 @@ extension LeadDeatilViewController {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
-        titleLabel.textColor = .label
         navigationItem.titleView = titleLabel
     }
     

@@ -57,9 +57,9 @@ extension MainViewController {
             })
             .disposed(by: disposeBag)
         
-        output.company
-            .drive(with: self, onNext: { owner, company in
-                owner.mainView.setupData(company: company)
+        output.companyName
+            .drive(with: self, onNext: { owner, companyName in
+                owner.mainView.setupData(companyName)
             })
             .disposed(by: disposeBag)
         

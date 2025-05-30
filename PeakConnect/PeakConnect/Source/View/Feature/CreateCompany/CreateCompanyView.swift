@@ -194,4 +194,17 @@ extension CreateCompanyView {
             make.top.equalTo(safeAreaLayoutGuide.snp.top).inset(20)
         }
     }
+    
+    func overCount() {
+        companyDescriptionTextView.layer.borderColor = UIColor.red.cgColor
+        companyDescriptionTextView.layer.borderWidth = 1
+        companyDescriptionCountLabel.textColor = .red
+        createButton.isEnabled = false
+    }
+    
+    func underCount() {
+        companyDescriptionTextView.layer.borderColor = .none
+        companyDescriptionCountLabel.textColor = .grayssss
+        createButton.isEnabled = true
+    }
 }

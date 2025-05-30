@@ -59,8 +59,13 @@ extension CreateCompanyViewController {
         let output = createCompanyViewModel.transform(input: input)
         
         output.companyDescriptionCount
-            .drive(with: self, onNext: { owner, text in
-                owner.createCompanyView.companyDescriptionCountLabel.text = text
+            .drive(with: self, onNext: { owner, count in
+                owner.createCompanyView.companyDescriptionCountLabel.text = "\(count)/100"
+                if count > 100 {
+                    owner.createCompanyView.overCount()
+                } else {
+                    owner.createCompanyView.underCount()
+                }
             })
             .disposed(by: disposeBag)
         
@@ -75,7 +80,6 @@ extension CreateCompanyViewController {
                 guard let company = company else { return }
                 owner.createCompanyView.setupEditMode(company)
                 owner.navigation()
-                print("test")
             })
             .disposed(by: disposeBag)
     }
@@ -94,7 +98,6 @@ extension CreateCompanyViewController {
         let titleLabel = UILabel()
         titleLabel.text = "회사 정보 수정"
         titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
-        titleLabel.textColor = .label
         navigationItem.titleView = titleLabel
 
     }

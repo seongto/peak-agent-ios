@@ -17,7 +17,7 @@ enum CreateCompanyMode {
 
 final class CreateCompanyViewModel {
     
-    private var countRelay = BehaviorRelay<String>(value: "0/100")
+    private var countRelay = BehaviorRelay<Int>(value: 0)
     private var completeRelay = PublishRelay<CreateCompanyMode>()
     private var companyRelay = BehaviorRelay<Company?>(value: nil)
     
@@ -47,7 +47,7 @@ extension CreateCompanyViewModel {
     }
     
     struct Output {
-        let companyDescriptionCount: Driver<String>
+        let companyDescriptionCount: Driver<Int>
         let complete: Driver<CreateCompanyMode>
         let company: Driver<Company?>
     }
@@ -64,7 +64,7 @@ extension CreateCompanyViewModel {
             .withUnretained(self)
             .subscribe(onNext: { owner, description in
                 owner.companyDescription = description
-                owner.countRelay.accept("\(description.count)/\(100)")
+                owner.countRelay.accept(description.count)
             })
             .disposed(by: disposeBag)
         
@@ -101,6 +101,7 @@ extension CreateCompanyViewModel {
             switch result {
             case .success(let uuid):
                 UserDefaults.standard.isBegginer = true
+                UserDefaults.standard.companyName = self.companyName
                 self.completeRelay.accept(mode)
                 guard let uuid = uuid else {
                     return

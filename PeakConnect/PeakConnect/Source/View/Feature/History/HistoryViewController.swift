@@ -28,6 +28,7 @@ class HistoryViewController: UIViewController, UICollectionViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
+        tabBarController?.tabBar.isHidden = false
     }
     
 }
@@ -44,6 +45,12 @@ extension HistoryViewController {
         let output = historyViewModel.transform(input: input)
         
         output.history
+            .skip(1)
+            .do(onNext: { [weak self] history in
+                guard let self = self else { return }
+                let historyIsEmpty = history.isEmpty ? false : true
+                self.historyView.noHistoryLabel.isHidden = historyIsEmpty
+            })
             .drive(historyView.colletionView.rx.items(
                 cellIdentifier: HistoryViewCollectionViewCell.id,
                 cellType: HistoryViewCollectionViewCell.self)) { row, element, cell in

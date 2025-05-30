@@ -26,6 +26,14 @@ class HistoryView: UIView {
         $0.showsVerticalScrollIndicator = false
         $0.register(HistoryViewCollectionViewCell.self, forCellWithReuseIdentifier: HistoryViewCollectionViewCell.id)
     }
+    
+    let noHistoryLabel = UILabel().then {
+        $0.text = "리드 추천 히스토리가 없습니다."
+        $0.numberOfLines = 2
+        $0.font = UIFont(name: "Pretendard-Regular", size: 20)
+        $0.textColor = .disabled
+        $0.isHidden = true
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,7 +51,8 @@ extension HistoryView {
         [
             topLogoImageView,
             titleLabel,
-            colletionView
+            colletionView,
+            noHistoryLabel
         ].forEach {
             addSubview($0)
         }
@@ -64,6 +73,10 @@ extension HistoryView {
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(20)
+        }
+        
+        noHistoryLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
 
     }

@@ -42,6 +42,7 @@ class HistoryResultViewController: UIViewController {
         titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
         titleLabel.textColor = .label
         navigationItem.titleView = titleLabel
+        tabBarController?.tabBar.isHidden = true
         }
 }
 

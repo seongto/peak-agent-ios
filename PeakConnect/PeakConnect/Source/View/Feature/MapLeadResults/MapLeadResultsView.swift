@@ -12,6 +12,7 @@ import Then
 class MapLeadResultsView: UIView {
 
     // MARK: - UI Components
+    
     private let resultCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -41,9 +42,11 @@ class MapLeadResultsView: UIView {
     }
 
     // MARK: - Properties
-    private var details: [Lead] = []
+    private var details: LeadRecommendationResponse?
 
     var onTrashButtonTapped: (() -> Void)?
+    var onShowAllResultsButtonTapped: ((Int) -> Void)?
+    var onCellTapped: ((Int) -> Void)?
 
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -61,12 +64,12 @@ class MapLeadResultsView: UIView {
     // MARK: - Setup Methods
     private func setupUI() {
         backgroundColor = .clear
-
+        
         addSubview(resultCollectionView)
         resultCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview().inset(80)
-            make.height.equalTo(250)
+            make.top.equalToSuperview().offset(35)
+            make.height.equalTo(220)
         }
 
         addSubview(showAllResultsButton)
@@ -91,44 +94,52 @@ class MapLeadResultsView: UIView {
 
     private func setupActions() {
         trashButton.addTarget(self, action: #selector(trashButtonTapped), for: .touchUpInside)
+        showAllResultsButton.addTarget(self, action: #selector(showAllResultsTapped), for: .touchUpInside)
+    }
+    
+    @objc private func showAllResultsTapped() {
+        guard let id = details?.recommendation_id else { return }
+        onShowAllResultsButtonTapped?(id) // ✅ Pass recommendation_id to HistoryResult
     }
 
-    // MARK: - Public Methods
-    func updateLeads(_ details: [Lead]) {
-        self.details = details // LeadDetail 배열 저장
-        resultCollectionView.reloadData()
-    }
-
-    // MARK: - Actions
     @objc private func trashButtonTapped() {
         onTrashButtonTapped?()
+    }
+
+    func updateLeads(_ details: LeadRecommendationResponse) {
+        self.details = details
+        print("업데이트된 leads 개수: \(details.leads.count)")
+        resultCollectionView.reloadData()
     }
 }
 
 // MARK: - UICollectionViewDataSource
-extension MapLeadResultsView: UICollectionViewDataSource {
+extension MapLeadResultsView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return details.count
+        print("📍 컬렉션뷰 셀 개수: \(details?.leads.count ?? 0)")
+        return details?.leads.count ?? 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CompanyInfoCell.identifier, for: indexPath) as? CompanyInfoCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CompanyInfoCell.identifier, for: indexPath) as? CompanyInfoCell,
+              let lead = details?.leads[indexPath.item] else {
             return UICollectionViewCell()
         }
-        let detail = details[indexPath.item]
-        cell.configure(
-            companyName: detail.name,
-            address: detail.address,
-            tags: detail.industry,
-            ceo: "N/A",
-            established: "N/A"
-        )
+
+        cell.configure(companyName: lead.name, address: lead.address, tags: lead.industry, ceo: "N/A", established: "N/A")
+
+        // ✅ 셀 클릭 시 recommendation_id만 넘김
+        cell.onCellTapped = { [weak self] in
+            self?.onCellTapped?(lead.id) // lead.id를 넘김!
+        }
         return cell
     }
-}
 
-// MARK: - UICollectionViewDelegateFlowLayout
-extension MapLeadResultsView: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let lead = details?.leads[indexPath.item] else { return }
+        onCellTapped?(lead.id) // lead.id를 넘김!
+    }
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 320, height: 200)
     }

@@ -20,6 +20,10 @@ class MapView: UIView {
     // 리드(회사 등) 위치 마커 배열
     var leadMarkers: [NMFMarker] = []
     
+    var currentRecommendationId: Int?
+    var onShowAllResultsButtonTapped: ((Int) -> Void)?
+    var onCellTapped: ((Int) -> Void)?
+    
     // 리드 검색 결과를 보여주는 뷰 (초기에는 숨김)
     let leadResultsView = MapLeadResultsView().then {
         $0.isHidden = true
@@ -213,8 +217,9 @@ class MapView: UIView {
         }
     }
 
-    func updateLeadResults(_ leads: [Lead]) {
-        leadResultsView.updateLeads(leads)
+    func updateLeadResults(_ leads: [Lead], recommendationId: Int) {
+        let response = LeadRecommendationResponse(recommendation_id: recommendationId, leads: leads)
+        leadResultsView.updateLeads(response)
     }
     
     // MARK: - 지도 이동 및 버튼 액션
@@ -225,7 +230,7 @@ class MapView: UIView {
         mapContainerView.mapView.moveCamera(cameraUpdate)
     }
     
-    func showLeadResultsView() {
+    func showLeadResultsView(recommendationId: Int) {
         leadModalView.isHidden = true
         showCurrentLocationMarker()
 
@@ -233,10 +238,16 @@ class MapView: UIView {
             mapContainerView.addSubview(leadResultsView)
         }
 
-        leadResultsView.snp.makeConstraints { make in
+        leadResultsView.snp.remakeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.height.equalTo(200)
+            make.bottom.equalTo(self.safeAreaLayoutGuide).inset(10) // safe area 고려
+            make.height.equalTo(300)
+        }
+        
+//        leadResultsView.updateLeads(LeadRecommendationResponse(recommendation_id: recommendationId, leads: []))
+        
+        leadResultsView.onShowAllResultsButtonTapped = { [weak self] id in
+            self?.onShowAllResultsButtonTapped?(id)
         }
 
         leadResultsView.onTrashButtonTapped = { [weak self] in
@@ -247,6 +258,11 @@ class MapView: UIView {
             self?.backButton.isHidden = false
             self?.leadMarkers.forEach { $0.mapView = nil }
             self?.leadMarkers.removeAll()
+        }
+        
+        leadResultsView.onCellTapped = { [weak self] id in
+            print("📍 MapView에서 셀 클릭 id: \(id)")
+            self?.onCellTapped?(id)
         }
 
         leadResultsView.isHidden = false

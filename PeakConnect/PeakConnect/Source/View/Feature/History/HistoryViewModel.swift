@@ -22,6 +22,10 @@ class HistoryViewModel {
     private var historyRelay = BehaviorRelay<[History?]>(value: [])
     private var idRealy = PublishRelay<Int>()
     private let disposeBag = DisposeBag()
+    
+    init() {
+        fetchData()
+    }
 }
 
 extension HistoryViewModel {

@@ -12,6 +12,7 @@ import RxCocoa
 class LeadDeatilViewController: UIViewController {
     
     private let leadDeatilView = LeadDeatilView()
+    private let loadingView = LoadingView()
     private let leadDeatilViewModel: LeadDeatilViewModel
     
     private let disposeBag = DisposeBag()
@@ -31,9 +32,21 @@ class LeadDeatilViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBar()
+        setupLoadingView()
         bind()
     }
+
+    private func setupBar() {
+        navigationController?.navigationBar.isHidden = false
+        tabBarController?.tabBar.isHidden = true
+    }
     
+    private func setupLoadingView() {
+        view.addSubview(loadingView)
+        loadingView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        loadingView.isHidden = false
+    }
 }
 
 extension LeadDeatilViewController {
@@ -53,12 +66,13 @@ extension LeadDeatilViewController {
         output.leadInfo
             .drive(with: self, onNext: { owner, result in
                 owner.leadDeatilView.configure(result)
+                owner.loadingView.isHidden = true
             })
             .disposed(by: disposeBag)
         
         output.title
             .drive(with: self, onNext: { owner, result in
-                owner.setupNavigation(result)
+                owner.setupNavigationTitle(result)
             })
             .disposed(by: disposeBag)
         
@@ -72,7 +86,7 @@ extension LeadDeatilViewController {
 
 extension LeadDeatilViewController {
     
-    private func setupNavigation(_ title: String) {
+    private func setupNavigationTitle(_ title: String) {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)

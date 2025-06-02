@@ -138,6 +138,9 @@ class MapView: UIView {
     // MARK: - SnapKit 레이아웃 설정
     
     private func setupLayout() {
+        mapContainerView.mapView.isNightModeEnabled = true
+        mapContainerView.mapView.mapType = .navi
+        
         // 지도 뷰는 전체 화면 설정
         mapContainerView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -195,6 +198,7 @@ class MapView: UIView {
         // 현재 위치로 마커 위치 지정 및 지도에 표시
         currentLocationMarker?.position = viewModel.currentLocation
         currentLocationMarker?.mapView = mapContainerView.mapView
+
     }
     
     

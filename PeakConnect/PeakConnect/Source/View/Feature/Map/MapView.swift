@@ -188,15 +188,10 @@ class MapView: UIView {
     // MARK: - 지도 마커 관련 기능
     
     private func showCurrentLocationMarker() {
-        
         if currentLocationMarker == nil {
             currentLocationMarker = NMFMarker()
-            currentLocationMarker?.iconImage = NMFOverlayImage(image: UIImage(systemName: "location.fill")!)
-            currentLocationMarker?.width = 32
-            currentLocationMarker?.height = 32
-            
         }
-        
+
         // 현재 위치로 마커 위치 지정 및 지도에 표시
         currentLocationMarker?.position = viewModel.currentLocation
         currentLocationMarker?.mapView = mapContainerView.mapView
@@ -208,11 +203,9 @@ class MapView: UIView {
         leadMarkers.removeAll()
         for coord in coordinates {
             let marker = NMFMarker(position: coord)
-            marker.iconImage = NMFOverlayImage(image: UIImage(systemName: "flag.fill")!)
-            marker.width = 40
-            marker.height = 40
             marker.anchor = CGPoint(x: 0.5, y: 1.0)
             marker.mapView = mapContainerView.mapView
+            
             leadMarkers.append(marker)
         }
     }

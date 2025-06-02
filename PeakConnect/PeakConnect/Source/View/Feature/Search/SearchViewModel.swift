@@ -36,6 +36,7 @@ extension SearchViewModel {
     
     struct Output {
         let search: Driver<[NaverLocalSearchResponse.Place]>
+        let result: Driver<Location>
     }
     
     func transform(input: Input) -> Output {
@@ -52,7 +53,8 @@ extension SearchViewModel {
             .disposed(by: disposeBag)
         
         return Output(
-            search: searchRelay.asDriver(onErrorDriveWith: .empty())
+            search: searchRelay.asDriver(onErrorDriveWith: .empty()),
+            result: resultRelay.asDriver(onErrorDriveWith: .empty())
         )
     }
 }

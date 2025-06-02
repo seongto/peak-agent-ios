@@ -65,6 +65,12 @@ extension SearchViewController {
                 }
                 .disposed(by: disposeBag)
         
+        output.result
+            .drive(with: self, onNext: { owner, _ in
+                owner.gobackView()
+            })
+            .disposed(by: disposeBag)
+        
         searchView.collectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
     }
@@ -83,11 +89,9 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
     }
 }
  
-extension HistoryResultViewController {
+extension SearchViewController {
     
-    private func connectView(_ id: Int) {
-        let leadDeatilViewModel = LeadDeatilViewModel(id: id)
-        let leadDeatilViewController = LeadDeatilViewController(leadDeatilViewModel: leadDeatilViewModel)
-        navigationController?.pushViewController(leadDeatilViewController, animated: false)
+    private func gobackView() {
+        navigationController?.popViewController(animated: true)
     }
 }

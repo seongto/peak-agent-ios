@@ -16,6 +16,7 @@ class MapViewController: UIViewController {
     private let viewModel = MapViewModel()
     private let disposeBag = DisposeBag()
     private let loadingView = LoadingView()
+    private let searchResultRelay = PublishRelay<Location>()
 
     override func loadView() {
         view = mapView
@@ -34,6 +35,19 @@ class MapViewController: UIViewController {
         view.addSubview(loadingView)
         loadingView.snp.makeConstraints { $0.edges.equalToSuperview() }
         loadingView.isHidden = true
+        
+        // ✅ 🔍 검색 결과 구독
+        searchResultRelay
+            .subscribe(onNext: { [weak self] location in
+                guard let self = self else { return }
+                print("📍 검색 결과 수신: \(location.latitude), \(location.longitude)")
+                
+                // 지도에 마커 추가
+                let marker = NMFMarker(position: NMGLatLng(lat: location.latitude, lng: location.longitude))
+                marker.mapView = self.mapView.mapContainerView.mapView
+                self.mapView.leadMarkers.append(marker)
+            })
+            .disposed(by: disposeBag)
         
         // 📍 셀 클릭 시 화면 전환 처리
         mapView.onCellTapped = { [weak self] id in
@@ -90,7 +104,7 @@ class MapViewController: UIViewController {
     }
 
     @objc private func didTapSearchButton() {
-        let searchViewModel = SearchViewModel(PublishRelay())
+        let searchViewModel = SearchViewModel(searchResultRelay)
         let searchViewController = SearchViewController(searchViewModel: searchViewModel)
         searchViewController.title = "검색"
         navigationController?.pushViewController(searchViewController, animated: false)

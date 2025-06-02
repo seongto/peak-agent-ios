@@ -40,12 +40,13 @@ extension LeadDeatilViewController {
     
     private func bind() {
         let viewWillAppear = rx.methodInvoked(#selector(viewWillAppear)).map { _ in }
-        let locationCopyButtonTapped = leadDeatilView.locationView.copyButton.rx.tap.asObservable()
-        let siteCopyButtonTapped = leadDeatilView.siteView.copyButton.rx.tap.asObservable()
+        let copyButtonTapped = Observable.merge(
+            leadDeatilView.locationView.copyButton.rx.tap.asObservable(),
+            leadDeatilView.siteView.copyButton.rx.tap.asObservable()
+        )
         let input = LeadDeatilViewModel.Input(
             viewWillAppear: viewWillAppear,
-            locationCopybuttonTapped: locationCopyButtonTapped,
-            siteCopybuttonTapped: siteCopyButtonTapped
+            copyButtonTapped: copyButtonTapped
         )
         let output = leadDeatilViewModel.transform(input: input)
         
@@ -62,8 +63,8 @@ extension LeadDeatilViewController {
             .disposed(by: disposeBag)
         
         output.copyText
-            .drive(with: self, onNext: { owner, result in
-                owner.popupToastView(result)
+            .drive(with: self, onNext: { owner, _ in
+                owner.popupToastView()
             })
             .disposed(by: disposeBag)
     }
@@ -78,7 +79,7 @@ extension LeadDeatilViewController {
         navigationItem.titleView = titleLabel
     }
     
-    private func popupToastView(_ text: String) {
-        leadDeatilView.toastView.showToastMessage(text)
+    private func popupToastView() {
+        leadDeatilView.toastView.showToastMessage()
     }
 }

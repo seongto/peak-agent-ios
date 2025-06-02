@@ -27,7 +27,7 @@ final class ToastView: UIView {
     }
     
     private func setupUI() {
-        backgroundColor = .textSecondary
+        backgroundColor = .secondary
         layer.cornerRadius = 16
         isHidden = true
                 
@@ -46,11 +46,11 @@ final class ToastView: UIView {
 
 extension ToastView {
     // 토스트 메세지 띄우기
-    func showToastMessage(_ message: String) {
+    func showToastMessage() {
         UIView.animate(withDuration: 1.0, delay: 1.5, options: .curveEaseIn, animations: {
             self.isHidden = false
             self.alpha = 0.0
-            self.toastLabel.text = message
+            self.toastLabel.text = "주소가 복사되었습니다."
         }) { _ in
             self.isHidden = true
             self.alpha = 1

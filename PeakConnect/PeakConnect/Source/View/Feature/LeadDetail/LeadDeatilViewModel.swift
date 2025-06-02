@@ -9,25 +9,13 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-enum CopyType {
-    case location
-    case site
-    
-    var text: String {
-        switch self {
-        case .location: "위치 주소가 복사되었습니다."
-        case .site: "사이트 주소가 복사되었습니다."
-        }
-    }
-}
-
 class LeadDeatilViewModel {
     
     private var lead: LeadInfo?
     
     private let leadInfoRelay = PublishRelay<LeadInfo>()
     private let titleRelay = PublishRelay<String>()
-    private let copyTextRelay = PublishRelay<String>()
+    private let copyTextRelay = PublishRelay<Void>()
     private let disposeBag = DisposeBag()
     
     init(id: Int) {
@@ -39,27 +27,20 @@ extension LeadDeatilViewModel {
     
     struct Input {
         let viewWillAppear: Observable<Void>
-        let locationCopybuttonTapped: Observable<Void>
-        let siteCopybuttonTapped: Observable<Void>
-
+        let copyButtonTapped: Observable<Void>
     }
     
     struct Output {
         let leadInfo: Driver<LeadInfo>
         let title: Driver<String>
-        let copyText: Driver<String>
+        let copyText: Driver<Void>
     }
     
     func transform(input: Input) -> Output {
-        input.locationCopybuttonTapped
+        input.copyButtonTapped
+            .throttle(.seconds(3), scheduler: MainScheduler.asyncInstance)
             .subscribe(with: self, onNext: { owner, _ in
-                owner.copyText(.location)
-            })
-            .disposed(by: disposeBag)
-        
-        input.siteCopybuttonTapped
-            .subscribe(with: self, onNext: { owner, _ in
-                owner.copyText(.site)
+                owner.copyText()
             })
             .disposed(by: disposeBag)
         
@@ -87,16 +68,11 @@ extension LeadDeatilViewModel {
         }
     }
     
-    private func copyText(_ type: CopyType) {
+    private func copyText() {
         guard let lead = lead else { return }
         var copyValue = ""
-        switch type {
-        case .location:
-            copyValue = lead.address
-        case .site: copyValue = lead.website
-        }
         
         UIPasteboard.general.string = copyValue
-        copyTextRelay.accept(type.text)
+        copyTextRelay.accept(())
     }
 }

@@ -78,10 +78,15 @@ extension SearchViewModel {
         guard let result = result else { return }
         let thisResult = result[indexPath.item]
         
-        let location = Location(
-            latitude: Double(Int(thisResult.mapx)!) / 10000000,
-            longitude: Double(Int(thisResult.mapy)!) / 10000000
-        )
-        resultRelay.accept(location)
+        if let mapx = Double(thisResult.mapx),
+           let mapy = Double(thisResult.mapy) {
+            let location = Location(
+                latitude: mapy / 10_000_000,
+                longitude: mapx / 10_000_000
+            )
+            resultRelay.accept(location)
+        } else {
+            print("🚨 좌표 변환 실패: \(thisResult.mapx), \(thisResult.mapy)")
+        }
     }
 }

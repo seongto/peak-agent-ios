@@ -66,8 +66,10 @@ extension SearchViewController {
                 .disposed(by: disposeBag)
         
         output.result
-            .drive(with: self, onNext: { owner, _ in
-                owner.gobackView()
+            .drive(with: self, onNext: { owner, location in
+                let mapVC = MapViewController()
+                mapVC.initialLocation = location  // 🌟 초기 위치 전달!
+                owner.navigationController?.pushViewController(mapVC, animated: true)
             })
             .disposed(by: disposeBag)
         

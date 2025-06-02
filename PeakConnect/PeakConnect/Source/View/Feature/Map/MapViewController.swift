@@ -17,6 +17,7 @@ class MapViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let loadingView = LoadingView()
     private let searchResultRelay = PublishRelay<Location>()
+    var initialLocation: Location?
 
     override func loadView() {
         view = mapView
@@ -36,16 +37,51 @@ class MapViewController: UIViewController {
         loadingView.snp.makeConstraints { $0.edges.equalToSuperview() }
         loadingView.isHidden = true
         
+        // 🌟 initialLocation 있을 경우, 해당 위치로 마커 및 카메라 이동
+        if let location = initialLocation {
+            let coord = NMGLatLng(lat: location.latitude, lng: location.longitude)
+            
+            // 기존 마커 제거
+            mapView.leadMarkers.forEach { $0.mapView = nil }
+            mapView.leadMarkers.removeAll()
+            
+            // 마커 추가
+            let marker = NMFMarker(position: coord)
+            marker.anchor = CGPoint(x: 0.5, y: 1.0)
+            marker.mapView = mapView.mapContainerView.mapView
+            mapView.leadMarkers.append(marker)
+            
+            // 카메라 이동
+            let cameraUpdate = NMFCameraUpdate(scrollTo: coord)
+            cameraUpdate.animation = .easeIn
+            mapView.mapContainerView.mapView.moveCamera(cameraUpdate)
+        }
+            
+        
         // ✅ 🔍 검색 결과 구독
         searchResultRelay
             .subscribe(onNext: { [weak self] location in
                 guard let self = self else { return }
                 print("📍 검색 결과 수신: \(location.latitude), \(location.longitude)")
-                
-                // 지도에 마커 추가
-                let marker = NMFMarker(position: NMGLatLng(lat: location.latitude, lng: location.longitude))
+
+                let coord = NMGLatLng(lat: location.latitude, lng: location.longitude)
+
+                // 📍 기존 leadMarkers 초기화
+                self.mapView.leadMarkers.forEach { $0.mapView = nil }
+                self.mapView.leadMarkers.removeAll()
+
+                // 📍 새로운 마커 추가 - 네이버 기본 마커 스타일 적용
+                let marker = NMFMarker(position: coord)
+                // 기본 마커를 쓰기 위해 iconImage 설정을 생략
+                // marker.iconImage = NMFOverlayImage.default ← 이 부분 삭제
+                marker.anchor = CGPoint(x: 0.5, y: 1.0)
                 marker.mapView = self.mapView.mapContainerView.mapView
                 self.mapView.leadMarkers.append(marker)
+
+                // 📍 카메라 이동
+                let cameraUpdate = NMFCameraUpdate(scrollTo: coord)
+                cameraUpdate.animation = .easeIn
+                self.mapView.mapContainerView.mapView.moveCamera(cameraUpdate)
             })
             .disposed(by: disposeBag)
         

@@ -12,6 +12,7 @@ import RxCocoa
 class HistoryResultViewController: UIViewController {
     
     private let historyResultView = HistoryResultView()
+    private let loadingView = LoadingView()
     private let historyResultViewModel: HistoryResultViewModel
     
     private let disposeBag = DisposeBag()
@@ -31,18 +32,26 @@ class HistoryResultViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBar()
+        setupLoadingView()
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    private func setupBar() {
         navigationController?.navigationBar.isHidden = false
+        tabBarController?.tabBar.isHidden = true
         let titleLabel = UILabel()
         titleLabel.text = "리드 추천 결과"
         titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
         navigationItem.titleView = titleLabel
         tabBarController?.tabBar.isHidden = true
-        }
+    }
+    
+    private func setupLoadingView() {
+        view.addSubview(loadingView)
+        loadingView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        loadingView.isHidden = false
+    }
 }
 
 extension HistoryResultViewController {
@@ -59,6 +68,7 @@ extension HistoryResultViewController {
         output.historyList
             .drive(with: self, onNext: { owner, result in
                 owner.historyResultView.configure(result)
+                owner.loadingView.isHidden = true
             })
             .disposed(by: disposeBag)
         
@@ -99,6 +109,6 @@ extension HistoryResultViewController {
     private func connectView(_ id: Int) {
         let leadDeatilViewModel = LeadDeatilViewModel(id: id)
         let leadDeatilViewController = LeadDeatilViewController(leadDeatilViewModel: leadDeatilViewModel)
-        navigationController?.pushViewController(leadDeatilViewController, animated: false)
+        navigationController?.pushViewController(leadDeatilViewController, animated: true)
     }
 }

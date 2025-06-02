@@ -37,6 +37,9 @@ class MapViewController: UIViewController {
         loadingView.snp.makeConstraints { $0.edges.equalToSuperview() }
         loadingView.isHidden = true
         
+        self.mapView.mapContainerView.mapView.addCameraDelegate(delegate: self) // 델리게이트 등록
+
+        
         // 🌟 initialLocation 있을 경우, 해당 위치로 마커 및 카메라 이동
         if let location = initialLocation {
             let coord = NMGLatLng(lat: location.latitude, lng: location.longitude)
@@ -65,6 +68,8 @@ class MapViewController: UIViewController {
                 print("📍 검색 결과 수신: \(location.latitude), \(location.longitude)")
 
                 let coord = NMGLatLng(lat: location.latitude, lng: location.longitude)
+                
+                print(coord)
 
                 // 📍 기존 leadMarkers 초기화
                 self.mapView.leadMarkers.forEach { $0.mapView = nil }
@@ -103,10 +108,15 @@ class MapViewController: UIViewController {
 
     private func setupBindings() {
         let input = MapViewModel.Input(
-            fetchLeadsTrigger: mapView.modalLeadSearchButton.rx.tap.asObservable()
+            fetchLeadsTrigger: mapView.modalLeadSearchButton.rx.tap
+                .map {
+                    return self.mapViewCameraIdle(self.mapView.mapContainerView.mapView)
+                }
+                .asObservable()
         )
         let output = viewModel.transform(input: input)
 
+        //self.mapView.mapContainerView.camera
         output.details
             .drive(onNext: { [weak self] details in
                 guard let self = self else { return }
@@ -143,7 +153,7 @@ class MapViewController: UIViewController {
         let searchViewModel = SearchViewModel(searchResultRelay)
         let searchViewController = SearchViewController(searchViewModel: searchViewModel)
         searchViewController.title = "검색"
-        navigationController?.pushViewController(searchViewController, animated: false)
+        navigationController?.pushViewController(searchViewController, animated: true)
     }
 
     @objc private func didTapLeadResultsButton() {
@@ -170,5 +180,12 @@ class MapViewController: UIViewController {
             marker.mapView = mapView.mapContainerView.mapView
             mapView.leadMarkers.append(marker)
         }
+    }
+}
+extension MapViewController: NMFMapViewCameraDelegate {
+    
+    private func mapViewCameraIdle(_ mapView: NMFMapView) -> NMGLatLng {
+        let centerCoord = mapView.cameraPosition.target
+        return centerCoord
     }
 }

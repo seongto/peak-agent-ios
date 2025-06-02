@@ -12,6 +12,7 @@ import RxCocoa
 class LeadDeatilViewController: UIViewController {
     
     private let leadDeatilView = LeadDeatilView()
+    private let loadingView = LoadingView()
     private let leadDeatilViewModel: LeadDeatilViewModel
     
     private let disposeBag = DisposeBag()
@@ -31,9 +32,15 @@ class LeadDeatilViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupLoadingView()
         bind()
     }
     
+    private func setupLoadingView() {
+        view.addSubview(loadingView)
+        loadingView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        loadingView.isHidden = false
+    }
 }
 
 extension LeadDeatilViewController {
@@ -53,6 +60,7 @@ extension LeadDeatilViewController {
         output.leadInfo
             .drive(with: self, onNext: { owner, result in
                 owner.leadDeatilView.configure(result)
+                owner.loadingView.isHidden = true
             })
             .disposed(by: disposeBag)
         

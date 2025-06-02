@@ -12,6 +12,7 @@ import RxCocoa
 class HistoryResultViewController: UIViewController {
     
     private let historyResultView = HistoryResultView()
+    private let loadingView = LoadingView()
     private let historyResultViewModel: HistoryResultViewModel
     
     private let disposeBag = DisposeBag()
@@ -31,6 +32,7 @@ class HistoryResultViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupLoadingView()
         bind()
     }
     
@@ -43,6 +45,12 @@ class HistoryResultViewController: UIViewController {
         navigationItem.titleView = titleLabel
         tabBarController?.tabBar.isHidden = true
         }
+    
+    private func setupLoadingView() {
+        view.addSubview(loadingView)
+        loadingView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        loadingView.isHidden = false
+    }
 }
 
 extension HistoryResultViewController {
@@ -59,6 +67,7 @@ extension HistoryResultViewController {
         output.historyList
             .drive(with: self, onNext: { owner, result in
                 owner.historyResultView.configure(result)
+                owner.loadingView.isHidden = true
             })
             .disposed(by: disposeBag)
         

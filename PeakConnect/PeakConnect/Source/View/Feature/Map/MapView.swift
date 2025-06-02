@@ -49,7 +49,7 @@ class MapView: UIView {
     // 모달의 타이틀 라벨
     let modalTitleLabel = UILabel().then {
         $0.text = "리드 탐색"
-        $0.font = .boldSystemFont(ofSize: 18)
+        $0.font = UIFont(name: "Pretendard-SemiBold", size: 18)
         $0.textColor = .white
         $0.textAlignment = .center
     }
@@ -58,9 +58,10 @@ class MapView: UIView {
     let modalSearchButton = UIButton(type: .system).then {
         $0.backgroundColor = UIColor.primary
         $0.setTitle("장소 / 지역\n검색", for: .normal)
+        $0.titleLabel?.font = UIFont(name: "Pretendard-Bold", size: 16)
         $0.setImage(UIImage(systemName: "magnifyingglass"), for: .normal)
         $0.tintColor = .white
-        $0.layer.cornerRadius = 10
+        $0.layer.cornerRadius = 24
         $0.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -76,8 +77,9 @@ class MapView: UIView {
         $0.backgroundColor = UIColor.secondary
         $0.setTitle("현재 위치에서\n리드 찾기", for: .normal)
         $0.setImage(UIImage(systemName: "dot.scope"), for: .normal)
+        $0.titleLabel?.font = UIFont(name: "Pretendard-Bold", size: 16)
         $0.tintColor = .white
-        $0.layer.cornerRadius = 10
+        $0.layer.cornerRadius = 24
         $0.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center

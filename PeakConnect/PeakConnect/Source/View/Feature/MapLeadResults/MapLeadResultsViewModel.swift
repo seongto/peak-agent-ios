@@ -35,6 +35,7 @@ class MapLeadResultsViewModel {
                     return Observable.empty()
                 }
                 return Observable.create { observer in
+                    //let center = mapView.cameraPosition.target
                     NetworkManager.shared.requestLeadRecommendation(
                         latitude: 37.5665,
                         longitude: 126.9780,

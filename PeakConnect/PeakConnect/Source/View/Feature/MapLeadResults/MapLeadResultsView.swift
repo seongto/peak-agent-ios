@@ -27,6 +27,7 @@ class MapLeadResultsView: UIView {
 
     let showAllResultsButton = UIButton(type: .system).then {
         $0.setTitle("추천 결과 전체 보기", for: .normal)
+        $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.setTitleColor(.white, for: .normal)
         $0.backgroundColor = .background
         $0.layer.cornerRadius = 14
@@ -35,8 +36,9 @@ class MapLeadResultsView: UIView {
 
     let trashButton = UIButton(type: .system).then {
         $0.setImage(UIImage(systemName: "trash"), for: .normal)
+        $0.tintColor = .grayssss
         $0.backgroundColor = .background
-        $0.layer.cornerRadius = 14
+        $0.layer.cornerRadius = 39 / 2
         $0.imageView?.contentMode = .scaleAspectFit
         $0.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
     }
@@ -66,26 +68,26 @@ class MapLeadResultsView: UIView {
         backgroundColor = .clear
         
         addSubview(resultCollectionView)
+        addSubview(showAllResultsButton)
+
         resultCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.top.equalToSuperview().offset(35)
-            make.height.equalTo(220)
+            make.bottom.equalTo(showAllResultsButton.snp.top).offset(-20)
+            make.height.equalTo(120)
         }
 
-        addSubview(showAllResultsButton)
         showAllResultsButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalTo(safeAreaLayoutGuide).inset(20)
-            make.height.equalTo(30)
-            make.width.equalTo(160)
+            make.height.equalTo(39)
+            make.width.equalTo(163)
         }
 
         addSubview(trashButton)
         trashButton.snp.makeConstraints { make in
-            make.leading.equalTo(showAllResultsButton.snp.trailing).offset(30)
+            make.leading.equalTo(showAllResultsButton.snp.trailing).offset(20)
             make.centerY.equalTo(showAllResultsButton)
-            make.height.equalTo(30)
-            make.width.equalTo(30)
+            make.size.equalTo(39)
         }
 
         resultCollectionView.dataSource = self
@@ -126,7 +128,7 @@ extension MapLeadResultsView: UICollectionViewDataSource, UICollectionViewDelega
             return UICollectionViewCell()
         }
 
-        cell.configure(companyName: lead.name, address: lead.address, tags: lead.industry, ceo: "N/A", established: "N/A")
+        cell.configure(lead)
 
         // ✅ 셀 클릭 시 recommendation_id만 넘김
         cell.onCellTapped = { [weak self] in
@@ -141,6 +143,11 @@ extension MapLeadResultsView: UICollectionViewDataSource, UICollectionViewDelega
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 320, height: 200)
+        return CGSize(width: collectionView.frame.width - 80, height: 120)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 20
     }
 }

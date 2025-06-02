@@ -32,8 +32,14 @@ class LeadDeatilViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBar()
         setupLoadingView()
         bind()
+    }
+
+    private func setupBar() {
+        navigationController?.navigationBar.isHidden = false
+        tabBarController?.tabBar.isHidden = true
     }
     
     private func setupLoadingView() {
@@ -66,7 +72,7 @@ extension LeadDeatilViewController {
         
         output.title
             .drive(with: self, onNext: { owner, result in
-                owner.setupNavigation(result)
+                owner.setupNavigationTitle(result)
             })
             .disposed(by: disposeBag)
         
@@ -80,7 +86,7 @@ extension LeadDeatilViewController {
 
 extension LeadDeatilViewController {
     
-    private func setupNavigation(_ title: String) {
+    private func setupNavigationTitle(_ title: String) {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)

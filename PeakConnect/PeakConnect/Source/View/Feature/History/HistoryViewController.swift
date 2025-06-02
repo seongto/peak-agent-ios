@@ -86,6 +86,6 @@ extension HistoryViewController {
     private func connectView(_ id: Int) {
         let historyResultViewModel = HistoryResultViewModel(id: id)
         let historyResultViewController = HistoryResultViewController(viewModel: historyResultViewModel)
-        navigationController?.pushViewController(historyResultViewController, animated: false)
+        navigationController?.pushViewController(historyResultViewController, animated: true)
     }
 }

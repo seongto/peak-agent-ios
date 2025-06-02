@@ -32,19 +32,20 @@ class HistoryResultViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBar()
         setupLoadingView()
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    private func setupBar() {
         navigationController?.navigationBar.isHidden = false
+        tabBarController?.tabBar.isHidden = true
         let titleLabel = UILabel()
         titleLabel.text = "리드 추천 결과"
         titleLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
         navigationItem.titleView = titleLabel
         tabBarController?.tabBar.isHidden = true
-        }
+    }
     
     private func setupLoadingView() {
         view.addSubview(loadingView)
@@ -108,6 +109,6 @@ extension HistoryResultViewController {
     private func connectView(_ id: Int) {
         let leadDeatilViewModel = LeadDeatilViewModel(id: id)
         let leadDeatilViewController = LeadDeatilViewController(leadDeatilViewModel: leadDeatilViewModel)
-        navigationController?.pushViewController(leadDeatilViewController, animated: false)
+        navigationController?.pushViewController(leadDeatilViewController, animated: true)
     }
 }

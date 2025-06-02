@@ -241,7 +241,6 @@ class MapView: UIView {
             make.height.equalTo(300)
         }
         
-//        leadResultsView.updateLeads(LeadRecommendationResponse(recommendation_id: recommendationId, leads: []))
         
         leadResultsView.onShowAllResultsButtonTapped = { [weak self] id in
             self?.onShowAllResultsButtonTapped?(id)

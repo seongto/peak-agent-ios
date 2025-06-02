@@ -9,11 +9,21 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+struct Location {
+    let latitude: Double
+    let longitude: Double
+}
+
 final class SearchViewModel {
     
     private let searchRelay = PublishRelay<[NaverLocalSearchResponse.Place]>()
+    private var resultRelay: PublishRelay<Location>
     private let disposeBag = DisposeBag()
     private var result: [NaverLocalSearchResponse.Place]?
+    
+    init(_ resultRelay: PublishRelay<Location>) {
+        self.resultRelay = resultRelay
+    }
 
 }
 
@@ -54,6 +64,7 @@ extension SearchViewModel {
             switch result {
             case .success(let input):
                 self.searchRelay.accept(input.items)
+                self.result = input.items
                 print("지도 검색 성공:", input)
             case .failure(let error):
                 print("지도 검색 실패:", error.localizedDescription)
@@ -62,7 +73,13 @@ extension SearchViewModel {
     }
     
     private func selectedItem(indexPath: IndexPath) {
+        guard let result = result else { return }
+        let thisResult = result[indexPath.item]
+        
+        let location = Location(
+            latitude: Double(Int(thisResult.mapx)!) / 10000000,
+            longitude: Double(Int(thisResult.mapy)!) / 10000000
+        )
+        resultRelay.accept(location)
     }
-    
-    
 }

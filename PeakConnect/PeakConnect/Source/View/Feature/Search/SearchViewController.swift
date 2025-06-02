@@ -12,9 +12,18 @@ import RxCocoa
 final class SearchViewController: UIViewController {
     
     private let searchView = SearchView()
-    private let searchViewModel = SearchViewModel()
+    private let searchViewModel: SearchViewModel
     
     private let disposeBag = DisposeBag()
+    
+    init(searchViewModel: SearchViewModel) {
+        self.searchViewModel = searchViewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         view = searchView

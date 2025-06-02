@@ -90,9 +90,10 @@ class MapViewController: UIViewController {
     }
 
     @objc private func didTapSearchButton() {
-        let dummySearchVC = SearchViewController()
-        dummySearchVC.title = "검색"
-        navigationController?.pushViewController(dummySearchVC, animated: false)
+        let searchViewModel = SearchViewModel(PublishRelay())
+        let searchViewController = SearchViewController(searchViewModel: searchViewModel)
+        searchViewController.title = "검색"
+        navigationController?.pushViewController(searchViewController, animated: false)
     }
 
     @objc private func didTapLeadResultsButton() {

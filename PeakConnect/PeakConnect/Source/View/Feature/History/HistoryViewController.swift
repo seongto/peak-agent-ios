@@ -45,6 +45,7 @@ extension HistoryViewController {
         let output = historyViewModel.transform(input: input)
         
         output.history
+            .skip(1)
             .do(onNext: { [weak self] history in
                 guard let self = self else { return }
                 let historyIsEmpty = history.isEmpty ? false : true

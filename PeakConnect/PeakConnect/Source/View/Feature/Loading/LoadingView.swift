@@ -8,45 +8,61 @@
 import UIKit
 import Then
 import SnapKit
+import ImageIO
 
 class LoadingView: UIView {
     
-    private let logoImageView = UIImageView().then {
-        $0.image = UIImage(named: "LoadingImage")
-        $0.contentMode = .scaleAspectFit
-    }
-    
-    private let activityIndicator = UIActivityIndicatorView(style: .large).then {
-        $0.color = .white
-        $0.startAnimating()
-    }
+    private let gifImageView = UIImageView() // GIF 애니메이션 뷰
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        setupGif()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
+        setupGif()
     }
     
     private func setupView() {
         backgroundColor = .background
         
-        addSubview(logoImageView)
-        addSubview(activityIndicator)
+        addSubview(gifImageView)
         
-        logoImageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(-50)
-            $0.width.height.equalTo(150)
-        }
-        
-        activityIndicator.snp.makeConstraints {
-            $0.top.equalTo(logoImageView.snp.bottom).offset(30)
-            $0.centerX.equalToSuperview()
+        gifImageView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-50)
+            make.width.height.equalTo(150) // 원하는 크기로 조정
         }
     }
+    
+    private func setupGif() {
+        guard let gifUrl = Bundle.main.url(forResource: "LoadingImage", withExtension: "gif"),
+              let gifData = try? Data(contentsOf: gifUrl),
+              let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
+            print("GIF 파일 로드 실패")
+            return
+        }
+        
+        var images: [UIImage] = []
+        var duration: Double = 0
+        
+        let frameCount = CGImageSourceGetCount(source)
+        for i in 0..<frameCount {
+            if let cgImage = CGImageSourceCreateImageAtIndex(source, i, nil) {
+                images.append(UIImage(cgImage: cgImage))
+                
+                let properties = CGImageSourceCopyPropertiesAtIndex(source, i, nil) as? [CFString: Any]
+                if let gifProperties = properties?[kCGImagePropertyGIFDictionary] as? [CFString: Any],
+                   let delayTime = gifProperties[kCGImagePropertyGIFDelayTime] as? Double {
+                    duration += delayTime
+                }
+            }
+        }
+        
+        gifImageView.image = UIImage.animatedImage(with: images, duration: duration)
+        gifImageView.contentMode = .scaleAspectFit
+    }
 }
-

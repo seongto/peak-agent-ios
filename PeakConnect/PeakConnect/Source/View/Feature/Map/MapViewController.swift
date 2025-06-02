@@ -15,6 +15,7 @@ class MapViewController: UIViewController {
     let mapView = MapView()
     private let viewModel = MapViewModel()
     private let disposeBag = DisposeBag()
+    private let loadingView = LoadingView()
 
     override func loadView() {
         view = mapView
@@ -29,6 +30,10 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupBindings()
         setupActions()
+        
+        view.addSubview(loadingView)
+        loadingView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        loadingView.isHidden = true
         
         // 📍 셀 클릭 시 화면 전환 처리
         mapView.onCellTapped = { [weak self] id in
@@ -69,16 +74,9 @@ class MapViewController: UIViewController {
             .disposed(by: disposeBag)
 
         output.isLoading
-            .drive(onNext: { isLoading in
-                print("로딩 중: \(isLoading)")
+            .drive(onNext: { [weak self] isLoading in
+                self?.loadingView.isHidden = !isLoading
             })
-            .disposed(by: disposeBag)
-
-        output.error
-            .drive(onNext: { errorMessage in
-                print("Error: \(errorMessage)")
-            })
-     
             .disposed(by: disposeBag)
     }
 

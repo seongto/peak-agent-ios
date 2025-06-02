@@ -143,6 +143,7 @@ extension NetworkManager {
                 case .success(let response):
                     completion(.success(response.uuid))
                     print("회사 등록 성공")
+                    UserDefaults.standard.set(response.uuid, forKey: "uuid")
                 case .failure(let error):
                     completion(.failure(error))
                     print("회사 등록 실패")
@@ -317,10 +318,13 @@ extension NetworkManager {
             "longitude": longitude,
             "location": location
         ]
+        
+        companyUUID = UserDefaults.standard.uuid
 
         AF.request(baseURL + endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: commonHeaders)
             .validate(statusCode: 200..<300)
             .responseDecodable(of: ApiResponse<LeadRecommendationResponse>.self) { response in
+                print("📡 네트워크 응답 전체: \(response)")
                 switch response.result {
                 case .success(let apiResponse):
                     if apiResponse.success, let data = apiResponse.data {
@@ -331,6 +335,7 @@ extension NetworkManager {
                         completion(.failure(AFError.responseValidationFailed(reason: .dataFileNil)))
                     }
                 case .failure(let error):
+                    print("❌ 네트워크 실패: \(error)")
                     completion(.failure(error))
                 }
             }
